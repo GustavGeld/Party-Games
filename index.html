@@ -9,6 +9,26 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Nunito:wght@400;600;700;800;900&family=Syne:wght@700;800&display=swap" rel="stylesheet">
   <!-- Styles and scripts will be injected by build.js before closing </head> -->
+  <script>
+    window.addEventListener('error', function(e) {
+      if (!document.getElementById('debug-log')) {
+        const div = document.createElement('div');
+        div.id = 'debug-log';
+        div.style.position = 'fixed';
+        div.style.top = '0';
+        div.style.left = '0';
+        div.style.background = 'rgba(255,0,0,0.8)';
+        div.style.color = 'white';
+        div.style.zIndex = '99999';
+        div.style.padding = '10px';
+        div.style.fontSize = '12px';
+        div.style.width = '100%';
+        div.style.pointerEvents = 'none';
+        document.documentElement.appendChild(div);
+      }
+      document.getElementById('debug-log').innerText += e.message + ' at ' + e.filename + ':' + e.lineno + '\n';
+    });
+  </script>
 <style>
 /* === kmk.css === */
 /* ===================================================
@@ -2572,7 +2592,7 @@ const KmkGame = {
 
     html += '<div class="kmk-play-container">';
     images.forEach((imgObj, i) => {
-      let pathStr = '../Pictures/' + imgObj.category + '/' + imgObj.file;
+      let pathStr = 'Pictures/' + imgObj.category + '/' + imgObj.file;
       let nameStr = this.formatName(imgObj.file);
       html += `
         <div class="kmk-card">
@@ -2683,7 +2703,7 @@ const KmkGame = {
     if (this.state.resultViewMode === 'segmented') {
       // MODE 2: SEGMENTED BARS (Specific Analysis)
       images.forEach((imgObj, i) => {
-        const pathStr = '../Pictures/' + imgObj.category + '/' + imgObj.file;
+        const pathStr = 'Pictures/' + imgObj.category + '/' + imgObj.file;
         const nameStr = this.formatName(imgObj.file);
         const data = rankings[i];
         
@@ -2714,7 +2734,7 @@ const KmkGame = {
 
       const getWinnerHTML = (idx, type, label, emoji) => {
         const imgObj = images[idx];
-        const pathStr = '../Pictures/' + imgObj.category + '/' + imgObj.file;
+        const pathStr = 'Pictures/' + imgObj.category + '/' + imgObj.file;
         const nameStr = this.formatName(imgObj.file);
         const pct = rankings[idx][type];
         return `
