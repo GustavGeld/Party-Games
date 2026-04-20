@@ -1158,9 +1158,20 @@
 /* --- Animations --- */
 @keyframes pop {
   0% { transform: scale(0.8); opacity: 0; }
+  70% { transform: scale(1.05); }
   100% { transform: scale(1); opacity: 1; }
 }
-  
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 </style>
 <script>
 /* === package-manager.js === */
@@ -1561,6 +1572,1213 @@ const Multiplayer = {
 const KMK_DATA = { Cartoon: ["aerith_gainsborough.webp","amity_blight.webp","android_18.webp","angelica_pickles.webp","anna.webp","anne_boonchuy.webp","april_oneil.webp","ariel.webp","asami_sato.webp","asuna_yuuki.webp","aurora.webp","azula.webp","baroness.webp","batgirl.webp","belle.webp","betty_boop.webp","betty_rubble.webp","black_canary.webp","black_cat.webp","cammy.webp","carmen_sandiego.webp","catwoman.webp","chun_li.webp","cinderella.webp","cruella_de_vil.webp","daphne_blake.webp","dora.webp","elastigirl.webp","elsa.webp","ember_mclain.webp","evil_lyn.webp","felicia.webp","fiona.webp","francine_smith.webp","gwen_stacy.webp","hayley_smith.webp","hinata_hyuga.webp","ivy_valentine.webp","jessica_rabbit.webp","jinx.webp","judy_hopps.webp","katara.webp","kim_possible.webp","kitana.webp","korra.webp","lana_kane.webp","lara_croft.webp","leela.webp","lisa_simpson.webp","lois_griffin.webp","lola_bunny.webp","luz_noceda.webp","mabel_pines.webp","maggie_simpson.webp","mai_shiranui.webp","maleficent.webp","marceline.webp","marge_simpson.webp","megara.webp","meg_griffin.webp","mileena.webp","misato_katsuragi.webp","miss_piggy.webp","moana.webp","morrigan_aensland.webp","mulan.webp","mystique.webp","nami.webp","nezuko_kamado.webp","nico_robin.webp","olive_oyl.webp","pocahontas.webp","poison_ivy.webp","princess_bubblegum.webp","princess_jasmine.webp","princess_peach.webp","psylocke.webp","rapunzel.webp","raven.webp","raya.webp","rinoa_heartilly.webp","rogue.webp","sailor_moon.webp","sakura_haruno.webp","sam_manson.webp","smurfette.webp","snow_white.webp","sonya_blade.webp","starfire.webp","supergirl.webp","taki.webp","tiana.webp","tifa_lockhart.webp","Tinkerbell.webp","toph_beifong.webp","vanellope_von_schweetz.webp","velma_dinkley.webp","vi.webp","wilma_flintstone.webp","wonder_woman.webp","yuffie_kisaragi.webp","yuna_final_fantasy.webp","zatanna.webp"], Celebrities: ["addison_rae.webp","Adriana Lima.webp","Alexa Demie.webp","Alexia Putellas.webp","alex_morgan.webp","Amanda Seyfried.webp","ana_de_armas.webp","angelina_jolie.webp","anya_taylor_joy.webp","ariana_grande.webp","Bella Thorne.webp","bella_hadid.webp","beyonce.webp","billie_eilish.webp","blake_lively.webp","Brie Larson.webp","Cameron Diaz.webp","Camila Cabello.webp","cara_delevingne.webp","Cardi B.webp","Charlize Theron.webp","charli_damelio.webp","Chloë Grace Moretz.webp","dakota_johnson.webp","deepika_padukone.webp","doja_cat.webp","Dove Cameron.webp","dua_lipa.webp","Elizabeth Olsen.webp","Elle Fanning.webp","Emily Ratajkowski.webp","Emma Chamberlain.webp","emma_stone.webp","emma_watson.webp","florence_pugh.webp","gal_gadot.webp","gigi_hadid.webp","Grimes.webp","hailee_steinfeld.webp","Hailey Bieber.webp","Halsey.webp","Hunter Schafer.webp","Iga Świątek.webp","Irina Shayk.webp","jenna_ortega.webp","jennie.webp","jennifer_lawrence.webp","Jessica Chastain.webp","jisoo.webp","Julia Roberts.webp","Katy Perry.webp","keira_knightley.webp","Kendall Jenner.webp","kendall_jenner.webp","kim_kardashian.webp","kylie_jenner.webp","lady_gaga.webp","Lana Del Rey.webp","Lily Collins.webp","Lindsey Vonn.webp","lisa.webp","Loren Gray.webp","Madison Beer.webp","margot_robbie.webp","Maude Apatow.webp","megan_fox.webp","megan_rapinoe.webp","Miley Cyrus.webp","millie_bobby_brown.webp","Monica Bellucci.webp","Naomi Osaka.webp","Natalie Dormer.webp","natalie_portman.webp","Nicki Minaj.webp","olivia_rodrigo.webp","Paige Bueckers.webp","Penélope Cruz.webp","Phoebe Dynevor.webp","priyanka_chopra.webp","Rachel McAdams.webp","rihanna.webp","ronda_rousey.webp","Rosalía.webp","rose.webp","Salma Hayek.webp","Sandra Bullock.webp","scarlett_johansson.webp","selena_gomez.webp","serena_williams.webp","shakira.webp","Simone Ashley.webp","simone_biles.webp","Sommer Ray.webp","sydney_sweeney.webp","SZA.webp","Tana Mongeau.webp","Tate McRae.webp","taylor_swift.webp","zendaya.webp","Zoë Kravitz.webp"] };
 </script>
 <script>
+/* === busfahrer.js === */
+const Busfahrer = {
+  name: "Busfahrer",
+  tagline: "Die ultimative Mutprobe am Fließband.",
+  color: "#ff3366",
+  shadow: "rgba(255, 51, 102, 0.4)",
+  glow: "rgba(255, 51, 102, 0.2)",
+  emoji: "🚌",
+
+  state: {
+    phase: 'setup',
+    players: [],
+    currentPlayerIndex: 0,
+    playerCards: {},        // { spielerName: [karten] }
+    playerHand: [],         // aktuelle 4 Karten des Spielers
+    questionIndex: 0,       // 0–3
+    busfahrer: null,
+    busRoute: [],           // 5 verdeckte Karten
+    busPosition: 0,
+    deck: [],
+    feedback: null,         // { type: 'success'|'error', text: '...' }
+    giveawaySips: {},       // { spielerName: count }
+    difficulty: 'hard',     // 'hard' (klassisch) oder 'easy' (entspannt)
+    cheatMode: false,
+    cheatClicks: 0,
+    candidates: [],         // Aktuelle Spieler im Stechen (leer = alle)
+    stechenRound: 0,
+    // New Feature Flags
+    schicksalTausch: true,
+    betting: true,
+    geisterbus: false,
+    timerRates: { passenger: 5, bus: 5 },
+    doppeldecker: true,
+    mode: 'offline', // 'offline' or 'online'
+    myName: 'Spieler 1',
+    // Dynamic State
+    currentTimer: 0,
+    busAttempts: 0,
+    activeBet: null, // { proId, value, stake, contraIds: [] }
+    busDrivers: [],  // For Doppeldecker
+    currentDriverIndex: 0,
+    showResult: false,
+    lastCard: null
+  },
+
+  suits: ['♠', '♥', '♦', '♣'],
+  ranks: ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'],
+  rankValues: { '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, '10':10, 'J':11, 'Q':12, 'K':13, 'A':14 },
+
+  open() {
+    this.state.cheatClicks = 0;
+    this.state.mode = 'offline';
+    Router.go('setup');
+    const title = document.getElementById('setup-title');
+    title.innerHTML = `Busfahre<span onclick="Busfahrer.countCheatClick()" style="cursor:default; -webkit-user-select:none; user-select:none;">r</span>`;
+    this.renderSetup();
+  },
+
+  countCheatClick() {
+    this.state.cheatClicks++;
+    if (this.state.cheatClicks === 5) {
+      this.state.cheatMode = !this.state.cheatMode;
+      this.state.cheatClicks = 0;
+      this.renderSetup();
+    }
+  },
+
+  renderSetup() {
+    if (this.state.players.length === 0) {
+      this.state.players = ['Spieler 1', 'Spieler 2'];
+    }
+
+    document.getElementById('setup-content').innerHTML = `
+      <div class="card">
+        <div class="card-label">${this.state.cheatMode ? '👤' : '👥'} Spieler</div>
+        <div class="players-list" id="bf-players-list"></div>
+        <button class="btn-add" onclick="Busfahrer.addPlayer()">＋ Spieler hinzufügen</button>
+      </div>
+
+      ${this.renderOptionsHTML()}
+
+      <button class="btn-primary" onclick="Busfahrer.startPassengerPhase()">Lokal spielen 🍺</button>
+      <button class="btn-primary" style="background:#ff3366;" onclick="UnifiedLobby.open(Busfahrer)">Online spielen 🌐</button>
+    `;
+    this.renderPlayersList();
+  },
+
+  renderOptionsHTML(isOnline = false) {
+    const s = this.state;
+    const updateCmd = isOnline ? 'UnifiedLobby._updateHostLobby()' : 'Busfahrer.renderSetup()';
+    
+    return `
+      <div class="card">
+        <div class="card-label">⚙️ Schwierigkeit</div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+           <button class="btn-primary" style="margin:0; background:${s.difficulty === 'hard' ? 'var(--primary)' : 'var(--surface2)'};" 
+                   onclick="Busfahrer.state.difficulty='hard'; ${updateCmd}">Klassisch</button>
+           <button class="btn-primary" style="margin:0; background:${s.difficulty === 'easy' ? 'var(--primary)' : 'var(--surface2)'};" 
+                   onclick="Busfahrer.state.difficulty='easy'; ${updateCmd}">Checkpoints</button>
+        </div>
+      </div>
+
+      <!-- Zusatz-Optionen -->
+      <div class="card">
+        <div class="card-label">🔥 Zusatz-Optionen</div>
+        <div class="packages-grid">
+          <div class="pkg-card ${this.state.schicksalTausch ? 'active' : ''}" onclick="Busfahrer.state.schicksalTausch = !Busfahrer.state.schicksalTausch; ${updateCmd}">
+            <div class="pkg-emoji">✨</div>
+            <div class="pkg-name">Glücks-Bonus</div>
+            <div class="pkg-count">4/4 richtig = 5 Schlucke</div>
+            <div class="pkg-check">✓</div>
+          </div>
+
+          <div class="pkg-card ${this.state.doppeldecker ? 'active' : ''}" onclick="Busfahrer.state.doppeldecker = !Busfahrer.state.doppeldecker; ${updateCmd}">
+            <div class="pkg-emoji">🚌</div>
+            <div class="pkg-name">Doppeldecker</div>
+            <div class="pkg-count">Team-Busfahrt bei Gleichstand</div>
+            <div class="pkg-check">✓</div>
+          </div>
+
+          <div class="pkg-card ${this.state.betting ? 'active' : ''}" onclick="Busfahrer.state.betting = !Busfahrer.state.betting; ${updateCmd}">
+            <div class="pkg-emoji">⚖️</div>
+            <div class="pkg-name">Wetten</div>
+            <div class="pkg-count">Einsätze auf den Busfahrer</div>
+            <div class="pkg-check">✓</div>
+          </div>
+
+          <div class="pkg-card ${this.state.geisterbus ? 'active' : ''}" onclick="Busfahrer.state.geisterbus = !Busfahrer.state.geisterbus; ${updateCmd}">
+            <div class="pkg-emoji">⏱️</div>
+            <div class="pkg-name">Geisterbus (Timer)</div>
+            <div class="pkg-count">Spiele unter Zeitdruck</div>
+            <div class="pkg-check">✓</div>
+          </div>
+        </div>
+
+        ${this.state.geisterbus ? `
+          <div style="margin-top:20px; animation: slideIn 0.3s both;">
+            <div style="margin-bottom:20px;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-weight:700; font-size:0.8rem; color:var(--text-muted);">
+                <span>PASSIERE SAMMELN</span>
+                <span style="color:var(--primary);">${this.state.timerRates.passenger}s</span>
+              </div>
+              <input type="range" class="styled-range" min="1" max="15" value="${this.state.timerRates.passenger}" 
+                     style="--pct:calc(${(this.state.timerRates.passenger - 1) / 14 * 100}% + ${-((this.state.timerRates.passenger - 1) / 14 - 0.5) * 26}px)"
+                     oninput="Busfahrer.state.timerRates.passenger = parseInt(this.value); const p=(this.value-1)/14; this.style.setProperty('--pct', \`calc(\${p*100}% + \${-(p-0.5)*26}px)\`); this.parentNode.querySelector('span:last-child').textContent = this.value + 's'">
+            </div>
+            <div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-weight:700; font-size:0.8rem; color:var(--text-muted);">
+                <span>BUSFAHRT</span>
+                <span style="color:var(--primary);">${this.state.timerRates.bus}s</span>
+              </div>
+              <input type="range" class="styled-range" min="1" max="15" value="${this.state.timerRates.bus}" 
+                     style="--pct:calc(${(this.state.timerRates.bus - 1) / 14 * 100}% + ${-((this.state.timerRates.bus - 1) / 14 - 0.5) * 26}px)"
+                     oninput="Busfahrer.state.timerRates.bus = parseInt(this.value); const p=(this.value-1)/14; this.style.setProperty('--pct', \`calc(\${p*100}% + \${-(p-0.5)*26}px)\`); this.parentNode.querySelector('span:last-child').textContent = this.value + 's'">
+            </div>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  },
+
+
+  renderPlayersList() {
+    const list = document.getElementById('bf-players-list');
+    if (!list) return;
+    list.innerHTML = this.state.players.map((p, i) => `
+      <div class="player-row">
+        <div class="player-avatar">${i + 1}</div>
+        <input type="text" class="player-input" value="${p}" onchange="Busfahrer.updatePlayer(${i}, this.value)">
+        ${this.state.players.length > 2 ? `<button class="btn-icon" onclick="Busfahrer.removePlayer(${i})">✕</button>` : ''}
+      </div>
+    `).join('');
+  },
+
+  addPlayer() {
+    if (this.state.players.length < 12) {
+      this.state.players.push(`Spieler ${this.state.players.length + 1}`);
+      this.renderPlayersList();
+    }
+  },
+
+  removePlayer(idx) {
+    if (this.state.players.length > 2) {
+      this.state.players.splice(idx, 1);
+      this.renderPlayersList();
+    }
+  },
+
+  updatePlayer(idx, val) {
+    if (val.trim()) this.state.players[idx] = val.trim();
+  },
+
+  initDeck() {
+    this.state.deck = [];
+    for (const s of this.suits) {
+      for (const r of this.ranks) {
+        this.state.deck.push({ 
+          suit: s, 
+          rank: r, 
+          color: (s === '♥' || s === '♦') ? 'red' : 'black',
+          value: this.rankValues[r]
+        });
+      }
+    }
+    this.shuffleDeck();
+  },
+
+  shuffleDeck() {
+    for (let i = this.state.deck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [this.state.deck[i], this.state.deck[j]] = [this.state.deck[j], this.state.deck[i]];
+    }
+  },
+
+  startPassengerPhase(subset = null) {
+    this.state.phase = 'passenger';
+    const isHost = this.state.mode !== 'online' || Multiplayer.role === 'host';
+    
+    if (isHost) {
+      this.state.candidates = subset || [...this.state.players];
+      // Shuffle order ONLY on host for deterministic sync
+      if (!subset) {
+        for (let i = this.state.candidates.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [this.state.candidates[i], this.state.candidates[j]] = [this.state.candidates[j], this.state.candidates[i]];
+        }
+      }
+      this.state.currentPlayerIndex = 0; 
+      this.state.questionIndex = 0;
+      this.state.playerHand = [];
+      this.state.playerCards = {};
+      this.state.candidates.forEach(p => {
+        const pName = typeof p === 'string' ? p : p.name;
+        this.state.playerCards[pName] = [];
+        this.state.giveawaySips[pName] = 0;
+      });
+      this.initDeck();
+    } else {
+      // Guest: Initialize candidates to avoid "..." while waiting for sync
+      this.state.candidates = subset || [...this.state.players];
+    }
+
+    Router.go('play');
+    document.getElementById('play-game-name').textContent = subset ? `Stechen (Runde ${this.state.stechenRound})` : "Passagiere sammeln";
+    this.renderPassengerPhase();
+    
+    if (this.state.geisterbus && isHost) this.startTimer('passenger');
+    if (this.state.mode === 'online' && isHost) this.syncState();
+  },
+
+  startTimer(phase) {
+    this.stopTimer();
+    const s = this.state;
+    const isHost = (s.mode !== 'online' || Multiplayer.role === 'host');
+    const rate = phase === 'passenger' ? s.timerRates.passenger : s.timerRates.bus;
+    s.currentTimer = rate;
+    let totalMs = rate * 1000;
+    
+    // Safety sync for reset
+    if (isHost && s.mode === 'online') this.syncState();
+
+    let lastSync = Date.now();
+    
+    this.timerInterval = setInterval(() => {
+      totalMs -= 100;
+      s.currentTimer = totalMs / 1000;
+
+      if (totalMs <= 0) {
+        s.currentTimer = 0;
+        this.stopTimer();
+        if (isHost) this.handleTimeout();
+      }
+      
+      const now = Date.now();
+      if (isHost && s.mode === 'online') {
+        // Only sync every 1s or on finish to save bandwidth
+        if (now - lastSync >= 1000 || totalMs <= 0) {
+          this.syncState();
+          lastSync = now;
+        }
+      }
+      
+      const bar = document.getElementById('bf-timer-bar-fill');
+      const num = document.getElementById('bf-timer-num');
+      if (bar) bar.style.width = Math.max(0, (s.currentTimer / rate) * 100) + '%';
+      if (num) num.textContent = Math.ceil(s.currentTimer);
+
+    }, 100);
+  },
+
+  stopTimer() {
+    if (this.timerInterval) clearInterval(this.timerInterval);
+    this.timerInterval = null;
+  },
+
+  handleTimeout() {
+    const s = this.state;
+    const currentPlayer = s.candidates[s.currentPlayerIndex] || { name: '...', id: null };
+    const playerName = typeof currentPlayer === 'string' ? currentPlayer : (currentPlayer.name || '...');
+    
+    s.feedback = { type: 'error', text: `Zu langsam! ⏱️ ${playerName} muss 2 Schlucke trinken.` };
+    s.showResult = true;
+    
+    if (s.phase === 'passenger') {
+      this.renderPassengerPhase();
+    } else if (s.phase === 'busfahrt') {
+      const currentDriver = s.busDrivers[s.currentDriverIndex] || { name: '...', id: null };
+      const driverName = typeof currentDriver === 'string' ? currentDriver : (currentDriver.name || '...');
+      
+      const penalty = Math.floor(s.busPosition / s.busDrivers.length) + 1;
+      if (s.difficulty === 'hard') {
+        s.busPosition = 0;
+        s.currentDriverIndex = 0;
+        this.initDeck();
+        const routeLen = s.busRoute.length;
+        s.busRoute = [];
+        for(let i=0; i<routeLen; i++) s.busRoute.push(s.deck.pop());
+        s.feedback.text = `Zu langsam! ⏱️ ${driverName} muss ${penalty} Schlucke trinken und zurück zum Start!`;
+      } else {
+        this.shufflePassedCards();
+        if (s.deck.length === 0) this.initDeck();
+        s.busRoute[s.busPosition] = s.deck.pop();
+        s.feedback.text = `Zu langsam! ⏱️ ${driverName} muss ${penalty} Schlucke trinken.`;
+      }
+      this.renderBusfahrt();
+    }
+    if (s.mode === 'online') this.syncState();
+  },
+
+  shufflePassedCards() {
+    const s = this.state;
+    if (s.busPosition <= 0) return;
+    // Shuffle all cards BEFORE current position
+    for (let i = 0; i < s.busPosition; i++) {
+      if (s.deck.length === 0) this.initDeck();
+      s.busRoute[i] = s.deck.pop();
+    }
+  },
+
+  renderCurrentPhase() {
+    const p = this.state.phase;
+    if (p === 'passenger') this.renderPassengerPhase();
+    else if (p === 'busfahrt' || p === 'gameover') this.renderBusfahrt();
+    else if (p === 'busfahrer_reveal') this.renderBusfahrerReveal();
+    else if (p === 'busfahrer_reveal_group') this.renderGroupReveal();
+    else if (p === 'stechen_reveal') {
+      // For stechen reveal, we need the losers list which isn't in state directly?
+      // Actually, we should probably have losers in state for sync.
+      this.renderStechenReveal(this.getLosers()); 
+    }
+  },
+
+  getLosers() {
+    const s = this.state;
+    // Recalculate losers based on sips for sync fallback
+    const names = Object.keys(s.playerCards);
+    const penalties = {};
+    names.forEach(name => {
+      penalties[name] = (s.playerCards[name] || []).filter(c => 
+        (c.color === 'red' && ['♦','♥'].includes(c.suit)) || 
+        (c.color === 'black' && ['♠','♣'].includes(c.suit))
+      ).length;
+    });
+    let max = -1; let losers = [];
+    Object.entries(penalties).forEach(([n, c]) => {
+      if (c > max) { max = c; losers = [n]; }
+      else if (c === max) losers.push(n);
+    });
+    return losers;
+  },
+
+  handleAnswer(answer) {
+    const s = this.state;
+    const isHost = (Multiplayer.role === 'host');
+    const isOffline = s.mode === 'offline';
+
+    const currentPlayer = s.candidates[s.currentPlayerIndex];
+    if (!currentPlayer || s.showResult) return;
+
+    if (!isOffline && !isHost) {
+      // Guest: Check if it's my turn before sending to host
+      const currentId = (typeof currentPlayer === 'object') ? currentPlayer.id : null;
+      const myId = Multiplayer.myId;
+      if (currentId && currentId !== myId) return;
+      
+      Multiplayer.sendToHost({ type: 'passenger_answer', answer: answer });
+      return;
+    }
+
+    this.stopTimer();
+    const checkCorrect = (c, qIdx, ans, hand) => {
+      if (qIdx === 0) return c.color === ans;
+      if (qIdx === 1) {
+        if (!hand || hand.length < 1) return false;
+        const prev = hand[0].value;
+        if (ans === 'higher') return c.value > prev;
+        if (ans === 'lower') return c.value < prev;
+        return c.value === prev;
+      }
+      if (qIdx === 2) {
+        if (!hand || hand.length < 2) return false;
+        const v1 = hand[0].value; const v2 = hand[1].value;
+        const min = Math.min(v1, v2); const max = Math.max(v1, v2);
+        if (ans === 'inside') return (c.value > min && c.value < max);
+        return (c.value < min || c.value > max);
+      }
+      if (qIdx === 3) return c.suit === ans;
+      return false;
+    };
+
+    const playerName = typeof currentPlayer === 'string' ? currentPlayer : currentPlayer.name;
+    let card = s.deck.pop();
+    
+    // Cheat Mode Precise Manipulation for Player 1
+    const p1 = s.players[0];
+    const p1Name = typeof p1 === 'string' ? p1 : p1.name;
+    const isCheatPlayer = (playerName === p1Name);
+
+    if (s.cheatMode && isCheatPlayer) {
+       const isLastCandidate = (s.currentPlayerIndex === s.candidates.length - 1);
+       
+       if (!isLastCandidate) {
+          // Case: First or someone else is still after him
+          if (s.stechenRound === 0) {
+             // Spieler 1 kann höchstens 2 falsche haben, aber auch 4 oder 3 richtige.
+             const wrongSoFar = s.questionIndex - (s.giveawaySips[playerName] || 0);
+             
+             if (wrongSoFar >= 2) {
+                // Ab 2 Fehlern erzwingen wir ab jetzt nur noch richtige Antworten
+                const isActuallyCorrect = checkCorrect(card, s.questionIndex, answer, s.playerHand);
+                if (!isActuallyCorrect) {
+                    const swapIdx = s.deck.findIndex(c => checkCorrect(c, s.questionIndex, answer, s.playerHand) === true);
+                    if (swapIdx !== -1) {
+                       const replacement = s.deck.splice(swapIdx, 1)[0];
+                       s.deck.push(card);
+                       card = replacement;
+                    }
+                }
+             }
+             // Wenn weniger als 2 Fehler da sind, lassen wir das Schicksal (den Deck-Zufall) entscheiden
+          } else {
+             // Stechen-Runden: "zufällig einer der nächsten 3 falsch haben"
+             if (s.questionIndex === 0) {
+                s.cheatFailIndex = Math.floor(Math.random() * 3); 
+             }
+             const desiredCorrect = (s.questionIndex === 3) ? true : (s.questionIndex !== s.cheatFailIndex);
+             
+             const isActuallyCorrect = checkCorrect(card, s.questionIndex, answer, s.playerHand);
+             if (isActuallyCorrect !== desiredCorrect) {
+                 const swapIdx = s.deck.findIndex(c => checkCorrect(c, s.questionIndex, answer, s.playerHand) === desiredCorrect);
+                 if (swapIdx !== -1) {
+                    const replacement = s.deck.splice(swapIdx, 1)[0];
+                    s.deck.push(card);
+                    card = replacement;
+                 }
+             }
+          }
+       } else {
+          // 2. Wenn Spieler 1 als letztes dran ist:
+          // Er soll mindestens 1 mehr richtig haben als der, der gerade am meisten falsch hat (am wenigsten richtig)
+          const othersSips = s.candidates
+             .filter(p => (typeof p === 'string' ? p : p.name) !== playerName)
+             .map(p => s.giveawaySips[typeof p === 'string' ? p : p.name] || 0);
+          
+          const minOthers = othersSips.length > 0 ? Math.min(...othersSips) : 0;
+          const targetCorrect = Math.min(4, minOthers + 1);
+          
+          const correctSoFar = s.giveawaySips[playerName] || 0;
+          const remainingQuestions = 4 - s.questionIndex;
+          const stillNeeded = targetCorrect - correctSoFar;
+          
+          let desiredCorrect = true;
+          if (stillNeeded <= 0) {
+             // Ziel bereits erreicht, wir können jetzt auch falsch liegen um unauffällig zu sein
+             desiredCorrect = false;
+          } else if (stillNeeded >= remainingQuestions) {
+             // Wir müssen alle restlichen richtig haben um das Ziel zu erreichen
+             desiredCorrect = true;
+          } else {
+             // Ein bisschen Puffer, aber wir wollen gewinnen
+             desiredCorrect = true;
+          }
+          
+          const isActuallyCorrect = checkCorrect(card, s.questionIndex, answer, s.playerHand);
+          if (isActuallyCorrect !== desiredCorrect) {
+              const swapIdx = s.deck.findIndex(c => checkCorrect(c, s.questionIndex, answer, s.playerHand) === desiredCorrect);
+              if (swapIdx !== -1) {
+                 const replacement = s.deck.splice(swapIdx, 1)[0];
+                 s.deck.push(card);
+                 card = replacement;
+              }
+          }
+       }
+    }
+
+    this.stopTimer();
+    let correct = checkCorrect(card, s.questionIndex, answer, s.playerHand);
+
+    s.playerHand.push(card);
+    s.playerCards[playerName].push(card);
+
+    if (correct) {
+      s.giveawaySips[playerName]++;
+      s.feedback = { type: 'success', text: `Richtig! ${playerName} darf +1 Schluck verteilen` };
+    } else {
+      s.feedback = { type: 'error', text: `Falsch! ${playerName} muss trinken` };
+    }
+
+    s.showResult = true;
+    s.lastCard = card;
+
+    this.renderPassengerPhase();
+    if (s.mode === 'online') this.syncState();
+  },
+
+  nextQuestion() {
+    const s = this.state;
+    if (s.mode === 'online' && Multiplayer.role !== 'host') {
+      Multiplayer.sendToHost({ type: 'next_question' });
+      return;
+    }
+    
+    s.showResult = false;
+    s.lastCard = null;
+    s.feedback = null;
+    s.questionIndex++;
+    
+    if (s.questionIndex > 3) {
+      const currentPlayer = s.candidates[s.currentPlayerIndex];
+      const playerName = typeof currentPlayer === 'string' ? currentPlayer : (currentPlayer ? currentPlayer.name : 'Unknown');
+      // Glücks-Bonus Check
+      if (s.schicksalTausch && s.giveawaySips[playerName] === 4) {
+        s.giveawaySips[playerName] = 5;
+        this.showSchicksalTausch(playerName);
+        if (s.mode === 'online') this.syncState();
+        return; // Wait for overlay
+      }
+      this.finishPassengerTurn();
+    } else {
+      this.renderPassengerPhase();
+      if (s.geisterbus) this.startTimer('passenger');
+      if (s.mode === 'online' && Multiplayer.role === 'host') this.syncState();
+    }
+  },
+
+  showSchicksalTausch(name) {
+    const div = document.createElement('div');
+    div.className = 'overlay-selection';
+    div.style = 'position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:200; display:flex; align-items:center; justify-content:center; animation: pop 0.4s both;';
+    div.innerHTML = `
+      <div class="card" style="text-align:center; padding:40px;">
+        <h1 style="color:#ffd700; font-family:'Abril Fatface', cursive; font-size:3rem; margin-bottom:20px;">✨ Glücks-Bonus! ✨</h1>
+        <p style="font-size:1.5rem; margin-bottom:30px;"><b>${name}</b> hat 4/4 richtig!<br>Du darfst jetzt <b>5 Schlucke</b> verteilen.</p>
+        <button class="btn-primary" onclick="this.parentElement.parentElement.remove(); Busfahrer.finishPassengerTurn()">Sensationell! 🚀</button>
+      </div>
+    `;
+    document.body.appendChild(div);
+  },
+
+  finishPassengerTurn() {
+    const s = this.state;
+    s.questionIndex = 0;
+    s.playerHand = [];
+    s.currentPlayerIndex++;
+    if (s.currentPlayerIndex >= s.candidates.length) {
+      this.selectBusfahrer();
+    } else {
+      this.renderPassengerPhase();
+      if (s.geisterbus) this.startTimer('passenger');
+      if (s.mode === 'online') this.syncState();
+    }
+  },
+
+  renderPassengerPhase(showResult = false, lastCard = null) {
+    const s = this.state;
+    const currentPlayer = s.candidates[s.currentPlayerIndex] || { name: '...', id: null };
+    const playerName = typeof currentPlayer === 'string' ? currentPlayer : (currentPlayer.name || '...');
+    const currentId = typeof currentPlayer === 'object' ? currentPlayer.id : null;
+    const myId = Multiplayer.role === 'host' ? 'host-1' : Multiplayer.myId;
+    
+    // Improved identity check for "Host" name
+    const isHost = (currentId === 'host-1' || playerName.toLowerCase() === 'host');
+    const isMeHost = (Multiplayer.role === 'host');
+    const isMyTurn = (s.mode === 'offline') || (isMeHost && isHost) || (currentId === myId);
+
+    let ht = `
+      <div style="text-align:center; margin-bottom:30px; animation: fadeInDown 0.5s both;">
+        <div style="font-size:0.9rem; text-transform:uppercase; letter-spacing:2px; color:var(--primary); font-weight:bold; margin-bottom:5px;">Aktueller Spieler</div>
+        <div style="font-family:'Abril Fatface', cursive; font-size:2.4rem; color:#fff; text-shadow: 0 4px 10px rgba(0,0,0,0.5); line-height:1.1;">${playerName}</div>
+        
+        <div style="display:flex; justify-content:center; gap:12px; margin-top:20px;">
+          ${s.playerHand.map((c, i) => `
+            <div style="width:45px; height:65px; background:#fff; border-radius:8px; border:1px solid #ccc; display:flex; flex-direction:column; align-items:center; justify-content:center; color:${c.color === 'red' ? '#ff3366' : '#000'}; font-size:1.1rem; font-weight:bold; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+              <span style="font-size:1.2rem; line-height:1;">${c.suit}</span>
+              <span style="font-size:1rem; line-height:1;">${c.rank}</span>
+            </div>
+          `).join('')}
+          ${Array(Math.max(0, 4 - s.playerHand.length)).fill(0).map(() => `
+            <div style="width:45px; height:65px; background:rgba(255,255,255,0.05); border:2px dashed rgba(255,255,255,0.2); border-radius:8px;"></div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+
+    // Timer Bar & Numbers
+    if (s.geisterbus && !showResult) {
+      const rate = s.phase === 'passenger' ? s.timerRates.passenger : s.timerRates.bus;
+      const pct = Math.max(0, (s.currentTimer / rate) * 100);
+      ht = `
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:25px; animation: fadeIn 0.4s both;">
+          <div style="flex:1; height:8px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden;">
+            <div id="bf-timer-bar-fill" style="width:${pct}%; height:100%; background:var(--primary); transition: width 0.1s linear;"></div>
+          </div>
+          <div id="bf-timer-num" style="font-family:'Abril Fatface', cursive; font-size:1.5rem; color:var(--primary); width:40px; text-align:right;">${Math.ceil(s.currentTimer)}</div>
+        </div>
+      ` + ht;
+    }
+
+    if (s.showResult) {
+      ht += `
+        <div style="text-align:center; animation: pop 0.4s both;">
+          ${s.lastCard ? `
+            <div style="width:140px; height:200px; background:#fff; border-radius:12px; margin: 0 auto 20px; display:flex; flex-direction:column; justify-content:center; align-items:center; color:${s.lastCard.color === 'red' ? '#ff3366' : '#000'}; border:2px solid ${s.feedback.type === 'success' ? 'var(--green)' : 'var(--primary)'}; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+               <div style="font-size:4rem;">${s.lastCard.suit}</div>
+               <div style="font-size:2rem; font-weight:900;">${s.lastCard.rank}</div>
+            </div>
+          ` : '<div style="font-size:5rem; margin-bottom:20px;">⏱️</div>'}
+          <h2 style="color:${s.feedback.type === 'success' ? 'var(--green)' : 'var(--primary)'}; margin-bottom:20px; font-family:'Abril Fatface', cursive;">
+            ${isMyTurn ? s.feedback.text.replace(playerName, 'Du').replace('muss', 'musst').replace('darf', 'darfst') : s.feedback.text}
+          </h2>
+          ${(s.mode === 'offline' || isMyTurn) ? `
+            <button class="btn-primary" onclick="Busfahrer.nextQuestion()">Weiter</button>
+          ` : `<p style="color:var(--text-muted); font-style:italic;">Warte auf ${isMyTurn ? 'dich' : playerName}...</p>`}
+        </div>
+      `;
+    } else {
+      const questions = [
+        "Rot oder Schwarz?",
+        "Höher oder Niedriger?",
+        "Innen oder Außen?",
+        "Welche Farbe? (Symbol)"
+      ];
+      ht += `
+        <div class="card" style="text-align:center; padding:30px 20px; background:var(--primary-dim); border:2px solid var(--primary);">
+          <div class="card-label">Frage ${s.questionIndex + 1}/4</div>
+          <h2 style="font-size:1.8rem; margin-bottom:30px;">${questions[s.questionIndex]}</h2>
+          
+          <div style="display:grid; grid-template-columns:1fr 1fr ${s.questionIndex === 3 ? '1fr 1fr' : ''}; gap:10px;">
+            ${isMyTurn ? this.renderQuestionButtons(s.questionIndex) : `<p style="grid-column:1/-1; color:var(--text-muted); padding:20px;">Warte auf <b>${playerName}</b>...</p>`}
+          </div>
+        </div>
+        <p style="text-align:center; color:var(--text-muted); margin-top:20px; font-size:0.9rem;">
+          Schlucke zum Verteilen: <b>${s.giveawaySips[playerName]}</b>
+        </p>
+      `;
+    }
+
+    document.getElementById('play-content').innerHTML = ht;
+  },
+
+  renderQuestionButtons(index) {
+    if (index === 0) {
+      return `
+        <button class="btn-primary" style="background:#ff3366; color:#fff;" onclick="Busfahrer.handleAnswer('red')">ROT</button>
+        <button class="btn-primary" style="background:#000; color:#fff; border:1px solid #333;" onclick="Busfahrer.handleAnswer('black')">SCHWARZ</button>
+      `;
+    } else if (index === 1) {
+      return `
+        <button class="btn-primary" onclick="Busfahrer.handleAnswer('higher')">HÖHER</button>
+        <button class="btn-primary" onclick="Busfahrer.handleAnswer('lower')">NIEDRIGER</button>
+      `;
+    } else if (index === 2) {
+      return `
+        <button class="btn-primary" onclick="Busfahrer.handleAnswer('inside')">INNEN</button>
+        <button class="btn-primary" onclick="Busfahrer.handleAnswer('outside')">AUSSEN</button>
+      `;
+    } else if (index === 3) {
+      return this.suits.map(s => `
+        <button class="btn-primary" style="font-size:1.5rem; padding: 10px;" onclick="Busfahrer.handleAnswer('${s}')">${s}</button>
+      `).join('');
+    }
+  },
+
+  selectBusfahrer() {
+    const s = this.state;
+    // Only check penalties of the CURRENT round's candidates
+    const penalties = {};
+    s.candidates.forEach(p => {
+      const pName = typeof p === 'string' ? p : p.name;
+      penalties[pName] = 4 - (s.giveawaySips[pName] || 0);
+    });
+
+    let maxPenalties = -1;
+    let losersNames = [];
+    
+    Object.entries(penalties).forEach(([name, count]) => {
+      if (count > maxPenalties) {
+        maxPenalties = count;
+        losersNames = [name];
+      } else if (count === maxPenalties) {
+        losersNames.push(name);
+      }
+    });
+
+    // Map back to full player objects for ID stability
+    const losers = losersNames.map(name => s.candidates.find(p => (typeof p === 'string' ? p : p.name) === name));
+
+    if (losers.length > 1 && s.doppeldecker) {
+      // DOPPELDECKER MODE!
+      s.busDrivers = losers;
+      s.phase = 'busfahrer_reveal_group';
+      this.renderGroupReveal();
+    } else if (losers.length > 1) {
+      // STECHEN!
+      this.state.stechenRound++;
+      this.renderStechenReveal(losers);
+    } else {
+      // Unique loser found
+      s.busfahrer = losers[0];
+      s.busDrivers = [losers[0]];
+      s.phase = 'busfahrer_reveal';
+      this.renderBusfahrerReveal();
+    }
+    if (s.mode === 'online') this.syncState();
+  },
+
+  renderGroupReveal() {
+    const s = this.state;
+    document.getElementById('play-content').innerHTML = `
+      <div class="card" style="text-align:center; padding:50px 20px; animation: pop 0.6s both;">
+        <div style="font-size:5rem; margin-bottom:20px;">🚌🚌</div>
+        <h1 style="font-family:'Abril Fatface', cursive; font-size:2.5rem; color:var(--primary); line-height:1.1; margin-bottom:20px;">DOPPELDECKER-MODE!</h1>
+        <p style="margin-bottom:20px;">Es gibt mehrere Busfahrer:</p>
+        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:30px;">
+          ${s.busDrivers.map(d => {
+            const name = typeof d === 'string' ? d : (d.name || '...');
+            return `<div style="font-size:1.5rem; font-weight:bold; color:#fff;">👤 ${name}</div>`;
+          }).join('')}
+        </div>
+        <p style="color:var(--text-muted); margin-bottom:40px;">Die Strecke ist jetzt <b>${s.busDrivers.length * 5}</b> Karten lang!</p>
+        ${(s.mode === 'offline' || Multiplayer.role === 'host') ? `
+          <button class="btn-primary" onclick="Busfahrer.startBusfahrt()">Fahrt starten 🏁</button>
+        ` : `<p style="color:var(--text-muted);">Warte auf den Host...</p>`}
+      </div>
+    `;
+  },
+
+  renderStechenReveal(losers) {
+    document.getElementById('play-content').innerHTML = `
+      <div class="card" style="text-align:center; padding:40px 20px; animation: pop 0.5s both;">
+        <h1 style="font-family:'Abril Fatface', cursive; font-size:3rem; color:var(--primary); margin-bottom:10px;">Unentschieden!</h1>
+        <div style="font-size:4rem; margin-bottom:20px;">⚔️</div>
+        <p style="margin-bottom:20px; font-size:1.1rem;">Es steht Gleichstand zwischen:</p>
+        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:30px;">
+          ${losers.map(l => {
+            const name = typeof l === 'string' ? l : (l.name || '...');
+            return `<div class="card" style="padding:10px; background:rgba(255,255,255,0.1); font-weight:bold; font-size:1.4rem;">${name}</div>`;
+          }).join('')}
+        </div>
+        <p style="color:var(--text-muted); margin-bottom:30px;">Ihr müsst ins Stechen. Nochmal 4 Karten rufen!</p>
+        ${(this.state.mode === 'offline' || Multiplayer.role === 'host') ? `
+          <button class="btn-primary" onclick="Busfahrer.startPassengerPhase(${JSON.stringify(losers).replace(/"/g, '&quot;')})">Stechen starten 🚀</button>
+        ` : `<p style="color:var(--text-muted);">Warte auf den Host...</p>`}
+      </div>
+    `;
+  },
+
+  renderBusfahrerReveal() {
+    const s = this.state;
+    document.getElementById('play-content').innerHTML = `
+      <div class="card" style="text-align:center; padding:50px 20px; animation: pop 0.6s both;">
+        <div style="font-size:5rem; margin-bottom:20px;">🚌</div>
+        <h1 style="font-family:'Abril Fatface', cursive; font-size:2.5rem; color:var(--primary); line-height:1.1; margin-bottom:20px;">Wir haben einen Busfahrer!</h1>
+        <h2 style="font-size:2rem; margin-bottom:30px;">${typeof s.busfahrer === 'string' ? s.busfahrer : (s.busfahrer?.name || '...')}</h2>
+        <p style="color:var(--text-muted); margin-bottom:40px;">Halt dich fest, es wird eine holprige Fahrt...</p>
+        ${(s.mode === 'offline' || Multiplayer.role === 'host') ? `
+          <button class="btn-primary" onclick="Busfahrer.startBusfahrt()">Busfahrt starten 🏁</button>
+        ` : `<p style="color:var(--text-muted);">Warte auf den Host...</p>`}
+      </div>
+    `;
+  },
+
+  startBusfahrt() {
+    const s = this.state;
+    s.phase = 'busfahrt';
+    s.busPosition = 0;
+    s.busAttempts = 0;
+    s.currentDriverIndex = 0;
+    s.activeBet = null;
+    this.initDeck(); // New deck for busfahrt
+    s.busRoute = [];
+    const routeLen = (s.busDrivers && s.busDrivers.length > 0) ? s.busDrivers.length * 5 : 5;
+    for(let i=0; i<routeLen; i++) s.busRoute.push(s.deck.pop());
+    s.questionIndex = 0;
+    s.feedback = null;
+    
+    document.getElementById('play-game-name').textContent = s.busDrivers.length > 1 ? "Doppeldecker-Fahrt" : "Busfahrt";
+    this.renderBusfahrt();
+    if (s.geisterbus) this.startTimer('bus');
+    if (s.mode === 'online') this.syncState();
+  },
+
+  handleBusAnswer(answer) {
+    const s = this.state;
+    const isHost = (Multiplayer.role === 'host');
+    const isOffline = s.mode === 'offline';
+
+    const currentDriver = s.busDrivers[s.currentDriverIndex];
+    if (!currentDriver || s.feedback) return;
+
+    if (!isOffline && !isHost) {
+      // Guest: Check turn before sending
+      const currentId = (typeof currentDriver === 'object') ? currentDriver.id : null;
+      const myId = Multiplayer.myId;
+      if (currentId && currentId !== myId) return;
+
+      Multiplayer.sendToHost({ type: 'bus_answer', answer: answer, turnIndex: s.currentDriverIndex });
+      return;
+    }
+
+    this.stopTimer();
+    const currentDriverObj = s.busDrivers[s.currentDriverIndex] || { name: '...', id: null };
+    const driverName = typeof currentDriverObj === 'string' ? currentDriverObj : (currentDriverObj.name || '...');
+    
+    s.busAttempts++;
+    const card = s.busRoute[s.busPosition];
+    let correct = false;
+
+    // Logic for questions
+    const qIndex = s.busPosition % 4;
+    if (qIndex === 0) correct = card.color === answer;
+    else if (qIndex === 1) {
+      const prev = s.busRoute[s.busPosition - 1].value;
+      if (answer === 'higher') correct = card.value > prev;
+      else if (answer === 'lower') correct = card.value < prev;
+      else correct = card.value === prev;
+    } else if (qIndex === 2) {
+      const v1 = s.busRoute[s.busPosition - 2].value;
+      const v2 = s.busRoute[s.busPosition - 1].value;
+      const min = Math.min(v1, v2); const max = Math.max(v1, v2);
+      if (answer === 'inside') correct = (card.value > min && card.value < max);
+      else correct = (card.value < min || card.value > max);
+    } else if (qIndex === 3) correct = card.suit === answer;
+
+    if (correct) {
+      s.busPosition++;
+      s.currentDriverIndex = (s.currentDriverIndex + 1) % s.busDrivers.length;
+      s.feedback = { type: 'success', text: `Richtig! ${driverName} kommt zur nächsten Station.` };
+      if (s.busPosition >= s.busRoute.length) {
+        s.phase = 'gameover';
+        this.renderBusfahrt(true);
+        if (s.mode === 'online') this.syncState();
+        return;
+      }
+      
+      // Auto-Resume after 1.5s for success
+      if (isHost) {
+        if (this.autoResumeTimeout) clearTimeout(this.autoResumeTimeout);
+        this.autoResumeTimeout = setTimeout(() => {
+          if (this.state.feedback && this.state.feedback.type === 'success' && this.state.phase === 'bus') {
+            this.resumeBusfahrt();
+          }
+        }, 1500);
+      }
+    } else {
+      const penalty = Math.floor(s.busPosition / s.busDrivers.length) + 1;
+      if (s.difficulty === 'easy') {
+        s.feedback = { type: 'error', text: `Falsch! ${driverName} muss ${penalty} Schlucke trinken.` };
+        if (s.deck.length === 0) this.initDeck();
+        s.busRoute[s.busPosition] = s.deck.pop();
+      } else {
+        s.feedback = { type: 'error', text: `Falsch! ${driverName} muss ${penalty} Schlucke trinken und zurück zum Start!` };
+        s.busPosition = 0;
+        s.currentDriverIndex = 0;
+        this.initDeck();
+        const routeLen = s.busDrivers.length * 5;
+        s.busRoute = [];
+        for(let i=0; i<routeLen; i++) s.busRoute.push(s.deck.pop());
+      }
+    }
+
+    this.renderBusfahrt(true, card);
+    if (s.mode === 'online') this.syncState();
+  },
+
+  renderBusfahrt() {
+    const s = this.state;
+    if (s.phase === 'gameover') return this.renderGameOver();
+
+    const showFeedback = !!s.feedback;
+
+    const currentDriver = s.busDrivers[s.currentDriverIndex] || { name: '...', id: null };
+    const driverName = typeof currentDriver === 'string' ? currentDriver : (currentDriver.name || '...');
+    const currentId = typeof currentDriver === 'object' ? currentDriver.id : null;
+    const myId = Multiplayer.role === 'host' ? 'host-1' : Multiplayer.myId;
+    
+    const isHost = (currentId === 'host-1' || driverName.toLowerCase() === 'host');
+    const isMeHost = (Multiplayer.role === 'host');
+    const isOnline = s.mode === 'online';
+    const isMyTurn = (s.mode === 'offline') || (isMeHost && isHost) || (currentId === myId);
+    const isAnyDriver = s.busDrivers.some(d => (typeof d === 'string' ? d : (d.id || null)) === myId);
+    
+    let ht = `
+      <div style="text-align:center; margin-bottom:20px;">
+        <div class="card-label">Aktueller Fahrer: <b>${driverName}</b></div>
+        <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Versuche: ${s.busAttempts}</div>
+    `;
+
+    // Timer
+    if (s.geisterbus && !showFeedback) {
+      const pct = Math.max(0, (s.currentTimer / s.timerRates.bus) * 100);
+      ht += `
+        <div style="display:flex; align-items:center; gap:8px; margin: 15px 0;">
+          <div style="flex:1; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;">
+            <div id="bf-timer-bar-fill" style="width:${pct}%; height:100%; background:var(--primary); transition: width 0.1s linear;"></div>
+          </div>
+          <div id="bf-timer-num" style="font-family:'Abril Fatface', cursive; color:var(--primary); font-size:1.1rem; width:30px; text-align:right;">${Math.ceil(s.currentTimer)}</div>
+        </div>
+      `;
+    }
+
+    ht += `
+        <div style="display:flex; justify-content:center; gap:5px; margin-top:15px; flex-wrap:wrap;">
+          ${s.busRoute.map((c, i) => `
+            <div style="width:40px; height:60px; border-radius:6px; display:flex; align-items:center; justify-content:center; transition:all 0.4s;
+                        ${i < s.busPosition ? `background:#fff; color:${c.color === 'red'?'#ff3366':'#000'}; border:1px solid var(--green); font-weight:bold; font-size:0.9rem;` : 
+                          i === s.busPosition ? 'background:var(--primary); border:2px solid #fff; box-shadow:0 0 10px var(--primary-glow); font-size:1.2rem;' : 
+                          'background:var(--surface2); border:1px solid var(--border); opacity:0.4; font-size:1rem;'}">
+              ${i < s.busPosition ? c.rank + c.suit : i === s.busPosition ? '❓' : ''}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <style>
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          20%, 60% { transform: translateX(-5px); }
+          40%, 80% { transform: translateX(5px); }
+        }
+      </style>
+    `;
+
+    if (showFeedback) {
+      ht += `
+        <div style="text-align:center; animation: ${s.feedback.type === 'success' ? 'pop 0.4s' : 'shake 0.4s'} both;">
+           <h2 style="color:${s.feedback.type === 'success' ? 'var(--green)' : 'var(--primary)'}; margin-bottom:25px; line-height:1.2;">
+             ${isMyTurn ? s.feedback.text.replace(driverName, 'Du').replace('muss', 'musst').replace('kommt', 'kommst') : s.feedback.text}
+           </h2>
+           ${s.feedback.type === 'success' ? 
+             `<p style="color:var(--text-muted); font-size:0.9rem; margin-top:10px;">Nächste Station...</p>` : 
+             (s.mode === 'offline' || isMyTurn) ? `<button class="btn-primary" onclick="Busfahrer.resumeBusfahrt()">Weiter</button>` : `<p style="color:var(--text-muted); margin-top:15px;">Warte auf ${isMyTurn ? 'dich' : driverName}...</p>`}
+        </div>
+      `;
+    } else {
+      const qIndex = s.busPosition % 4;
+      const questions = ["Rot oder Schwarz?", "Höher oder Niedriger?", "Innen oder Außen?", "Welche Farbe?"];
+      ht += `
+        <div class="card" style="text-align:center; padding:20px 15px; background:var(--primary-dim); border:2px solid var(--primary);">
+          <div class="card-label">Station ${s.busPosition + 1}/${s.busRoute.length}</div>
+          <h2 style="font-size:1.4rem; margin-bottom:20px;">${questions[qIndex]}</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr ${qIndex === 3 ? '1fr 1fr' : ''}; gap:10px;">
+            ${isMyTurn ? this.renderBusButtons(qIndex) : `<p style="grid-column:1/-1; color:var(--text-muted);">Warte auf ${currentDriver.name || currentDriver}...</p>`}
+          </div>
+        </div>
+      `;
+
+      // Betting UI: Only for spectators (not in busDrivers list)
+      if (s.betting && isOnline && !isAnyDriver) {
+        ht += this.renderBettingInterface();
+      }
+    }
+
+    document.getElementById('play-content').innerHTML = ht;
+  },
+
+  resumeBusfahrt() {
+    if (this.autoResumeTimeout) clearTimeout(this.autoResumeTimeout);
+    this.autoResumeTimeout = null;
+
+    if (this.state.mode === 'online' && Multiplayer.role !== 'host') {
+      Multiplayer.sendToHost({ type: 'resume_bus' });
+      return;
+    }
+    this.state.feedback = null;
+    this.renderBusfahrt();
+    if (this.state.geisterbus) this.startTimer('bus');
+    if (this.state.mode === 'online') this.syncState();
+  },
+
+  renderBettingInterface() {
+    const s = this.state;
+    const currentDriver = s.busDrivers[s.currentDriverIndex] || { name: '...', id: null };
+    const driverName = typeof currentDriver === 'string' ? currentDriver : (currentDriver.name || '...');
+    
+    const isBettor = s.activeBet && (s.activeBet.proId === Multiplayer.myId);
+    const isContra = s.activeBet && s.activeBet.contraIds.includes(Multiplayer.myId);
+
+    let html = `
+      <div class="card" style="margin-top:20px; background:var(--surface2); border:1px solid var(--border);">
+        <div class="card-label">🎲 Wetten dass...</div>
+    `;
+
+    if (!s.activeBet) {
+      html += `
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">Wette, dass ${driverName} den Bus in weniger als X Versuchen schafft!</p>
+        <div style="display:flex; gap:8px;">
+          <input type="number" id="bet-input" class="player-input" placeholder="Anzahl Versuche" style="flex:1;">
+          <button class="btn-primary" style="font-size:0.8rem; width:auto; padding:0 20px;" onclick="Busfahrer.placeBet(document.getElementById('bet-input').value)">Wetten!</button>
+        </div>
+      `;
+    } else {
+      html += `
+        <div style="background:var(--primary-dim); padding:10px; border-radius:8px; margin-bottom:10px;">
+          <div style="font-weight:bold; color:var(--primary); font-size:1.1rem;">Ziel: Unter ${s.activeBet.value} Versuche</div>
+          <p style="font-size:0.75rem; margin-top:4px;">${driverName} muss den Bus in maximal ${s.activeBet.value-1} Versuchen verlassen.</p>
+          <div style="margin-top:8px; font-weight:700;">Einsatz: ${s.activeBet.stake} Schlucke</div>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+          <button class="btn-primary" style="margin:0; font-size:0.8rem;" onclick="Busfahrer.toppen()" ${isBettor ? 'disabled' : ''}>Toppen (-1 Auf, +1 Schl)</button>
+          <button class="btn-primary" style="margin:0; font-size:0.8rem; background:var(--secondary);" onclick="Busfahrer.contra()" ${isContra ? 'disabled' : ''}>Dagegen (${s.activeBet.contraIds.length})</button>
+        </div>
+      `;
+    }
+    html += `</div>`;
+    return html;
+  },
+
+  placeBet(val) {
+    const v = parseInt(val);
+    if (isNaN(v) || v <= 0) return;
+    Multiplayer.sendToHost({ type: 'place_bet', value: v, proId: Multiplayer.myId });
+  },
+  toppen() {
+    Multiplayer.sendToHost({ type: 'toppen', myId: Multiplayer.myId });
+  },
+  contra() {
+    Multiplayer.sendToHost({ type: 'contra', myId: Multiplayer.myId });
+  },
+
+  resolveBets() {
+    const s = this.state;
+    if (!s.activeBet) return "";
+
+    const won = s.busAttempts < s.activeBet.value;
+    const stake = s.activeBet.stake;
+    const contraCount = s.activeBet.contraIds.length;
+    const proPlayer = s.players.find(p => p.id === s.activeBet.proId) || { name: 'Unbekannt' };
+    
+    let report = `<div class="card" style="margin-top:20px; border:2px solid gold;">
+      <h3 style="color:gold;">📊 Wett-Ergebnisse</h3>
+      <p>Wette: <b>Unter ${s.activeBet.value}</b> (Tatsächlich: ${s.busAttempts})</p>
+    `;
+
+    if (won) {
+      const drinkAmt = stake * contraCount;
+      report += `<p style="color:var(--green);"><b>Gewonnen!</b> ${proPlayer.name} liegt richtig.</p>`;
+      report += `<p>Alle Contra-Wetter müssen trinken: <b>${stake} Schlucke</b>.</p>`;
+    } else {
+      const drinkAmt = stake * contraCount;
+      report += `<p style="color:var(--primary);"><b>Verloren!</b> ${proPlayer.name} liegt daneben.</p>`;
+      report += `<p>${proPlayer.name} muss trinken: <b>${drinkAmt} Schlucke</b>.</p>`;
+    }
+    report += `</div>`;
+    return report;
+  },
+
+  renderBusButtons(index) {
+    if (index === 0) {
+      return `
+        <button class="btn-primary" style="background:#ff3366; color:#fff;" onclick="Busfahrer.handleBusAnswer('red')">ROT</button>
+        <button class="btn-primary" style="background:#000; color:#fff; border:1px solid #333;" onclick="Busfahrer.handleBusAnswer('black')">SCHWARZ</button>
+      `;
+    } else if (index === 1) {
+      return `
+        <button class="btn-primary" onclick="Busfahrer.handleBusAnswer('higher')">HÖHER</button>
+        <button class="btn-primary" onclick="Busfahrer.handleBusAnswer('lower')">NIEDRIGER</button>
+      `;
+    } else if (index === 2) {
+      return `
+        <button class="btn-primary" onclick="Busfahrer.handleBusAnswer('inside')">INNEN</button>
+        <button class="btn-primary" onclick="Busfahrer.handleBusAnswer('outside')">AUSSEN</button>
+      `;
+    } else if (index === 3) {
+      return this.suits.map(s => `
+        <button class="btn-primary" style="font-size:1.5rem; padding: 10px;" onclick="Busfahrer.handleBusAnswer('${s}')">${s}</button>
+      `).join('');
+    }
+  },
+
+  renderGameOver() {
+    const betReport = this.resolveBets();
+    document.getElementById('play-content').innerHTML = `
+      <div class="card" style="text-align:center; padding:30px 20px; animation: pop 0.6s both;">
+        <div style="font-size:5rem; margin-bottom:20px;">🎉</div>
+        <h1 style="font-family:'Abril Fatface', cursive; font-size:2.8rem; color:var(--green); line-height:1.1; margin-bottom:15px;">Fahrt beendet!</h1>
+        <h2 style="margin-bottom:15px;">Der Bus wurde sicher verlassen!</h2>
+        <div style="font-size:0.9rem; color:var(--text-muted); margin-bottom:20px;">Benötigte Versuche: ${this.state.busAttempts}</div>
+        
+        ${betReport}
+
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:30px;">
+          ${(this.state.mode !== 'online' || Multiplayer.role === 'host') ? `
+            <button class="btn-primary" onclick="Busfahrer.startPassengerPhase()">Nochmal spielen 🚀</button>
+            <button class="btn-primary" style="background:var(--surface2); color:var(--text);" onclick="Busfahrer.backToLobby()">Warteraum 🏠</button>
+          ` : `
+            <p style="color:var(--text-muted); font-size:1.1rem; margin-bottom:10px;">Warte auf den Host...</p>
+          `}
+          <button class="btn-primary" style="background:var(--surface2); color:var(--text); opacity:0.8; font-size:0.9rem;" onclick="location.reload()">Spiel verlassen 👋</button>
+        </div>
+      </div>
+    `;
+  },
+
+  /* ===== ONLINE HOOKS ===== */
+  renderHostSetup() {
+    return this.renderOptionsHTML(true);
+  },
+
+  collectOnlineSettings() {
+    return {
+      difficulty: this.state.difficulty,
+      schicksalTausch: this.state.schicksalTausch,
+      doppeldecker: this.state.doppeldecker,
+      geisterbus: this.state.geisterbus,
+      timerRates: this.state.timerRates,
+      betting: this.state.betting
+    };
+  },
+
+  onOnlineGameStart(settings) {
+    Object.assign(this.state, settings);
+    this.state.mode = 'online';
+    this.startPassengerPhase();
+  },
+
+  syncState() {
+    if (Multiplayer.role === 'host') {
+      // Create a clean copy for network transmission (remove circular connection objects)
+      const sanitizedState = { ...this.state };
+      
+      const sanitizePlayer = (p) => {
+        if (typeof p === 'object' && p !== null) return { id: p.id, name: p.name };
+        return p;
+      };
+
+      sanitizedState.players = this.state.players.map(sanitizePlayer);
+      sanitizedState.candidates = this.state.candidates.map(sanitizePlayer);
+      sanitizedState.busDrivers = this.state.busDrivers.map(sanitizePlayer);
+
+      Multiplayer.sendGameState({ type: 'sync', state: sanitizedState });
+    }
+  },
+
+  backToLobby() {
+    if (this.state.mode === 'online' && Multiplayer.role === 'host') {
+      Multiplayer.sendGameState({ type: 'back_to_lobby' });
+    }
+    if (typeof UnifiedLobby !== 'undefined') UnifiedLobby.open(this);
+    else location.reload();
+  },
+
+  handleOnlineData(data) {
+    const s = this.state;
+    if (data.type === 'sync') {
+      Object.assign(s, data.state);
+      this.renderCurrentPhase();
+    } else if (data.type === 'back_to_lobby') {
+      if (typeof UnifiedLobby !== 'undefined') UnifiedLobby.open(this);
+      else location.reload();
+    } else if (Multiplayer.role === 'host') {
+      if (data.type === 'passenger_answer') {
+        this.handleAnswer(data.answer);
+      } else if (data.type === 'bus_answer') {
+        // Only process if it matches the current turn index
+        if (data.turnIndex === s.currentDriverIndex) {
+          this.handleBusAnswer(data.answer);
+        } else {
+          console.warn("Ignored out-of-sync bus answer");
+          this.syncState(); // Force Resync
+        }
+      } else if (data.type === 'next_question') {
+        this.nextQuestion();
+      } else if (data.type === 'resume_bus') {
+        this.resumeBusfahrt();
+      } else if (data.type === 'place_bet') {
+        if (!s.activeBet && s.betting) {
+          s.activeBet = { proId: data.proId, value: data.value, stake: 2, contraIds: [] };
+          this.syncState();
+        }
+      } else if (data.type === 'toppen') {
+        if (s.activeBet && s.activeBet.proId !== data.myId) {
+          s.activeBet.proId = data.myId;
+          s.activeBet.value = Math.max(1, s.activeBet.value - 1);
+          s.activeBet.stake++;
+          this.syncState();
+        }
+      } else if (data.type === 'contra') {
+        if (s.activeBet && !s.activeBet.contraIds.includes(data.myId) && s.activeBet.proId !== data.myId) {
+          s.activeBet.contraIds.push(data.myId);
+          this.syncState();
+        }
+      }
+    }
+  }
+};
+</script>
+<script>
 /* === games-array.js === */
 const GAMES = [
   {
@@ -1651,6 +2869,42 @@ const GAMES = [
     glow:    'rgba(255, 59, 48, 0.2)',
     open() {
       Schuldspruch.open();
+    }
+  },
+  {
+    id:      'koenigscup',
+    name:    'Königs-Cup',
+    emoji:   '👑',
+    tagline: 'Gießen. Ziehen. Leeren.',
+    color:   '#f59e0b',
+    shadow:  'rgba(245, 158, 11, 0.4)',
+    glow:    'rgba(245, 158, 11, 0.2)',
+    open() {
+      KoenigsCup.open();
+    }
+  },
+  {
+    id:      'busfahrer',
+    name:    'Busfahrer',
+    emoji:   '🚌',
+    tagline: 'Die ultimative Mutprobe am Fließband.',
+    color:   '#ff3366',
+    shadow:  'rgba(255, 51, 102, 0.4)',
+    glow:    'rgba(255, 51, 102, 0.2)',
+    open() {
+      Busfahrer.open();
+    }
+  },
+  {
+    id:      'ihn',
+    name:    'Ich hab noch nie',
+    emoji:   '🤐',
+    tagline: 'Wahrheit oder Trinken. Sag die Wahrheit!',
+    color:   '#8e44ad',
+    shadow:  'rgba(142, 68, 173, 0.4)',
+    glow:    'rgba(142, 68, 173, 0.2)',
+    open() {
+      IchHabNochNie.open();
     }
   }
 ];</script>
@@ -2240,6 +3494,493 @@ const GrenzGaenger = {
 };
 </script>
 <script>
+/* === ichhabnochnie.js === */
+/**
+ * ICH HAB NOCH NIE - Party Game Module
+ * Modes: Classic (Round-based), Voting (Anonymous), Blitz (Speed)
+ */
+
+window.IchHabNochNie = {
+  id: 'ichhabnochnie',
+  name: 'Ich hab noch nie',
+  emoji: '🤐',
+  color: '#8e44ad',
+  description: 'Das ultimative Enthüllungsspiel. Wer lügt, wer trinkt?',
+  
+  state: {
+    mode: 'klassisch', // 'klassisch' | 'voting' | 'blitz'
+    players: [],
+    currentPlayerIndex: 0,
+    activeCategories: ['harmlos', 'mittel', 'spicy'],
+    deck: [],
+    usedCards: [],
+    currentCard: null,
+    
+    // Voting Mode
+    votes: {}, // { playerId: true/false }
+    votingOpen: false,
+    voteTimer: 0,
+    
+    // Blitz Mode
+    timeLeft: 60,
+    cardCount: 0,
+    drinkCounts: {}, // { playerName: count }
+    
+    phase: 'setup', // 'setup' | 'play' | 'reveal' | 'gameover'
+    isOnline: false
+  },
+
+  categories: {
+    harmlos: {
+      name: 'Harmlos',
+      emoji: '💚',
+      cards: [
+        "einen Film weinend beendet",
+        "eine ganze Pizza alleine gegessen",
+        "mich im Kino verlaufen",
+        "beim Zähneputzen die Kleidung bekleckert",
+        "so getan als würde ich telefonieren um jemanden zu meiden",
+        "meinen eigenen Namen gegoogelt",
+        "eine Spinne mit dem Staubsauger weggesaugt",
+        "den falschen Mülleimer benutzt",
+        "an meinem Finger geschnuppert nachdem ich was angefasst habe",
+        "im Schlaf geredet",
+        "beim Laufen gegen eine Glasscheibe gelaufen",
+        "Süßigkeiten im Bett gegessen und Krümel überall gehabt",
+        "beim Sport so getan als würde ich mich dehnen um Pause zu machen",
+        "ein Lied mitgesungen obwohl ich den Text nicht kann"
+      ]
+    },
+    mittel: {
+      name: 'Mittel',
+      emoji: '🟡',
+      cards: [
+        "jemanden auf einer Party geküsst",
+        "betrunken eine Ex angeschrieben",
+        "beim ersten Date die Rechnung nicht bezahlt",
+        "so getan als wäre ich krank um nicht zur Arbeit zu müssen",
+        "ein Geheimnis verraten das ich versprochen hatte zu bewahren",
+        "aus Versehen eine Nachricht an die Person geschickt über die ich gelästert habe",
+        "beim Vorbeigehen in ein Schaufenster geschaut um mein Spiegelbild zu checken",
+        "so getan als würde ich jemanden nicht sehen um nicht hallo sagen zu müssen",
+        "etwas geliehen und nie zurückgegeben",
+        "im Restaurant nach dem Essen das Besteck eingesteckt",
+        "eine Peinlichkeit auf Social Media gepostet und direkt wieder gelöscht",
+        "meinem Partner/meiner Partnerin das Passwort verheimlicht"
+      ]
+    },
+    spicy: {
+      name: 'Spicy',
+      emoji: '🔴',
+      cards: [
+        "eine Nacht mit jemandem verbracht den ich kaum kannte",
+        "in der Öffentlichkeit erwischt worden",
+        "jemanden geküsst der hier im Raum ist",
+        "einen Dirty Talk per Nachricht an die falsche Person geschickt",
+        "ohne Unterwäsche das Haus verlassen",
+        "beim Sex an jemand anderen gedacht",
+        "jemanden gedatet nur um dessen Ex eifersüchtig zu machen",
+        "eine Dating-App benutzt während ich in einer Beziehung war",
+        "nackt gebadet (außer in der Wanne)",
+        "in einer Umkleidekabine Sex gehabt",
+        "jemanden betrogen",
+        "Sex im Auto gehabt"
+      ]
+    },
+    extrem: {
+      name: 'Extrem',
+      emoji: '🤯',
+      cards: [
+        "etwas Illegales getan wofür ich verhaftet werden könnte",
+        "einen Diebstahl begangen",
+        "beim Fremdgehen erwischt worden",
+        "eine Beziehung zerstört (bewusst)",
+        "in eine fremde Wohnung eingebrochen",
+        "Drogen auf einer Party verkauft",
+        "eine Schlägerei angefangen",
+        "Geld von Freunden geklaut",
+        "jemanden erpresst",
+        "beim Klauen in einem Supermarkt erwischt worden",
+        "jemandem das Herz gebrochen und es nicht bereut",
+        "mich an einem Ex-Partner gerächt",
+        "gelogen um jemanden ins Gefängnis oder in große Schwierigkeiten zu bringen"
+      ]
+    },
+    gruppe: {
+      name: 'Gruppe',
+      emoji: '🎯',
+      cards: [
+        "X's Ex gedatet",
+        "im Urlaub dieser Gruppe etwas versteckt",
+        "jemanden aus dieser Gruppe heimlich gestalkt",
+        "über jemanden aus dieser Gruppe schlecht geredet",
+        "jemanden aus dieser Gruppe auf 'Stumm' geschaltet",
+        "gelogen um nicht zu einem Treffen dieser Gruppe kommen zu müssen",
+        "jemandem aus dieser Gruppe Geld geliehen und es nie zurückerwartet",
+        "ein Geheimnis über jemanden hier im Raum erfahren, das ich nicht wissen sollte"
+      ]
+    }
+  },
+
+  open() {
+    this.state.phase = 'setup';
+    this.state.players = (window.Multiplayer && Multiplayer.players.map(p => p.name)) || ['Spieler 1', 'Spieler 2'];
+    this.state.isOnline = (window.Multiplayer && Multiplayer.role);
+    Router.go('setup');
+    this.renderSetup();
+  },
+
+  renderSetup() {
+    const s = this.state;
+    const isHost = !s.isOnline || (Multiplayer.role === 'host');
+    const updateCmd = isHost ? `window.IchHabNochNie.syncSetup()` : ``;
+
+    let html = `
+      <div class="setup-container">
+        <h1 style="color:var(--primary); font-family:'Abril Fatface', cursive; font-size:2.8rem; text-align:center; margin-bottom:10px;">Ich hab noch nie...</h1>
+        <p style="text-align:center; color:var(--text-muted); margin-bottom:30px;">Konfiguriere deine Wahrheitssitzung</p>
+
+        <!-- Pakete -->
+        <div class="card" style="margin-bottom:20px;">
+          <div class="card-label">Fragen-Pakete</div>
+          <div class="packages-grid" style="grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));">
+            ${Object.entries(this.categories).map(([key, cat]) => `
+              <div class="pkg-card ${s.activeCategories.includes(key) ? 'active' : ''}" onclick="window.IchHabNochNie.toggleCategory('${key}'); ${updateCmd}">
+                <div class="pkg-emoji">${cat.emoji}</div>
+                <div class="pkg-name">${cat.name}</div>
+                <div class="pkg-count">${cat.cards.length} Karten</div>
+                <div class="pkg-check">✓</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Spieler (offline) -->
+        ${!s.isOnline ? `
+          <div class="card" style="margin-bottom:20px;">
+            <div class="card-label">Spieler</div>
+            <div id="ihn-players-list">
+              ${s.players.map((p, i) => `
+                <div class="player-row" style="display:flex; gap:10px; margin-bottom:8px;">
+                  <input type="text" class="player-input" value="${p}" onchange="window.IchHabNochNie.state.players[${i}]=this.value" style="flex:1;">
+                  ${s.players.length > 2 ? `<button class="btn-icon" onclick="window.IchHabNochNie.state.players.splice(${i},1); window.IchHabNochNie.renderSetup()">✕</button>` : ''}
+                </div>
+              `).join('')}
+            </div>
+            <button class="btn-primary btn-outline" style="width:auto; font-size:0.8rem; margin-top:10px;" onclick="window.IchHabNochNie.state.players.push('Spieler '+(window.IchHabNochNie.state.players.length+1)); window.IchHabNochNie.renderSetup()">+ Spieler</button>
+          </div>
+        ` : ''}
+
+        ${isHost ? `<button class="btn-primary" onclick="window.IchHabNochNie.startGame()">Spiel starten 🚀</button>` : `<p style="text-align:center; color:var(--text-muted);">Warte auf den Host...</p>`}
+      </div>
+    `;
+    document.getElementById('setup-content').innerHTML = html;
+  },
+
+  toggleCategory(key) {
+    const idx = this.state.activeCategories.indexOf(key);
+    if (idx > -1) {
+      if (this.state.activeCategories.length > 1) this.state.activeCategories.splice(idx, 1);
+    } else {
+      this.state.activeCategories.push(key);
+    }
+    this.renderSetup();
+  },
+
+  startGame() {
+    const s = this.state;
+    s.phase = 'play';
+    s.currentPlayerIndex = 0;
+    s.usedCards = [];
+    s.drinkCounts = {};
+    s.players.forEach(p => s.drinkCounts[p] = 0);
+    
+    // Create deck
+    s.deck = [];
+    s.activeCategories.forEach(key => {
+      s.deck = s.deck.concat(this.categories[key].cards);
+    });
+    this.shuffle(s.deck);
+    
+    Router.go('play');
+    this.nextCard();
+  },
+
+  shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+  },
+
+  nextCard() {
+    const s = this.state;
+    if (s.deck.length === 0) {
+      this.endGame();
+      return;
+    }
+    
+    s.currentCard = s.deck.pop();
+    s.usedCards.push(s.currentCard);
+    s.votes = {};
+    s.votingOpen = true;
+    s.phase = 'play';
+    
+    if (s.mode === 'klassisch') {
+      s.currentPlayerIndex = (s.currentPlayerIndex + 1) % s.players.length;
+    } else if (s.mode === 'blitz' && s.phase === 'play') {
+      if (s.timeLeft === 60) this.startBlitzTimer();
+    }
+    
+    this.renderCurrentScreen();
+    if (s.isOnline && Multiplayer.role === 'host') this.syncGame();
+  },
+
+  renderCurrentScreen() {
+    const s = this.state;
+    const playContent = document.getElementById('play-content');
+    if (!playContent) return;
+    
+    document.getElementById('play-game-name').textContent = "Ich hab noch nie...";
+
+    if (s.mode === 'voting') {
+      this.renderVoting();
+    } else if (s.mode === 'blitz') {
+      this.renderBlitz();
+    } else {
+      this.renderKlassisch();
+    }
+  },
+
+  renderKlassisch() {
+    const s = this.state;
+    const reader = s.players[s.currentPlayerIndex]?.name || s.players[s.currentPlayerIndex];
+    const isMeHost = (Multiplayer.role === 'host');
+
+    let html = `
+      <div style="text-align:center; padding:20px;">
+        <div style="font-size:0.9rem; text-transform:uppercase; letter-spacing:2px; color:var(--primary); font-weight:700; margin-bottom:5px;">An der Reihe</div>
+        <div style="font-family:'Abril Fatface', cursive; font-size:2rem; margin-bottom:40px;">${reader}</div>
+
+        <div class="card" style="min-height:200px; display:flex; flex-direction:column; justify-content:center; padding:40px 20px; background:white; position:relative; overflow:hidden; animation: pop 0.4s both;">
+          <div style="position:absolute; top:10px; left:10px; font-size:4rem; opacity:0.1; font-family:'Abril Fatface';">"</div>
+          <div style="font-size:1.4rem; color:var(--text-muted); margin-bottom:10px;">Ich hab noch nie...</div>
+          <div style="font-size:1.8rem; font-weight:bold; color:#2c3e50; line-height:1.2;">${s.currentCard}</div>
+        </div>
+
+        <div style="margin-top:40px;">
+           <p style="color:var(--text-muted); margin-bottom:20px;">Jeder, der es getan hat, trinkt! 🍺</p>
+           ${(!s.isOnline || (Multiplayer.role === 'host')) ? `<button class="btn-primary" onclick="window.IchHabNochNie.nextCard()">Nächste Karte</button>` : `<p style="color:var(--primary); font-weight:bold;">Warte auf den Host...</p>`}
+        </div>
+      </div>
+    `;
+    document.getElementById('play-content').innerHTML = html;
+  },
+
+  renderVoting() {
+    const s = this.state;
+    const myId = Multiplayer.myId || 'host-1';
+    const hasVoted = s.votes[myId] !== undefined;
+
+    let html = `
+      <div style="text-align:center; padding:20px;">
+        <div class="card" style="min-height:160px; display:flex; flex-direction:column; justify-content:center; padding:30px 20px; background:white; margin-bottom:30px; animation: pop 0.4s both;">
+          <div style="font-size:1.2rem; color:var(--text-muted); margin-bottom:10px;">Ich hab noch nie...</div>
+          <div style="font-size:1.6rem; font-weight:bold;">${s.currentCard}</div>
+        </div>
+
+        ${s.phase !== 'reveal' ? `
+           <div style="display:grid; grid-template-columns:1fr; gap:15px;">
+              <button class="btn-primary" onclick="window.IchHabNochNie.sendVote(true)" ${hasVoted ? 'disabled' : ''}>✅ Hab ich gemacht</button>
+              <button class="btn-primary btn-outline" onclick="window.IchHabNochNie.sendVote(false)" ${hasVoted ? 'disabled' : ''}>❌ Nie gemacht</button>
+           </div>
+           <p style="margin-top:20px; color:var(--text-muted);">${Object.keys(s.votes).length} / ${s.players.length} Stimmen</p>
+        ` : `
+           <div id="ihn-results" style="animation: fadeIn 0.5s both;">
+              ${this.calcResultsHTML()}
+              ${(!s.isOnline || Multiplayer.role === 'host') ? `<button class="btn-primary" onclick="window.IchHabNochNie.nextCard()" style="margin-top:20px;">Weiter</button>` : ''}
+           </div>
+        `}
+      </div>
+    `;
+    document.getElementById('play-content').innerHTML = html;
+    
+    if (Object.keys(s.votes).length >= s.players.length && s.phase !== 'reveal' && s.players.length > 0) {
+       this.revealVotes();
+    }
+  },
+
+  sendVote(val) {
+    const s = this.state;
+    const myId = Multiplayer.myId || 'host-1';
+    s.votes[myId] = val;
+    this.renderCurrentScreen();
+    if (s.isOnline) {
+      if (Multiplayer.role === 'host') this.syncGame();
+      else Multiplayer.sendToHost({ type: 'ihn_vote', val: val });
+    }
+  },
+
+  revealVotes() {
+    this.state.phase = 'reveal';
+    this.renderCurrentScreen();
+    if (this.state.isOnline && Multiplayer.role === 'host') this.syncGame();
+  },
+
+  calcResultsHTML() {
+    const s = this.state;
+    const total = Object.keys(s.votes).length || 1;
+    const yesCount = Object.values(s.votes).filter(v => v === true).length;
+    const yesPct = Math.round((yesCount / total) * 100);
+
+    return `
+      <div style="margin-top:20px;">
+        <h3 style="margin-bottom:20px;">Ergebnis Anonym</h3>
+        <div style="height:30px; background:rgba(0,0,0,0.1); border-radius:15px; overflow:hidden; display:flex;">
+          <div style="width:${yesPct}%; background:var(--green); height:100%; transition: width 1s;"></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-top:10px; font-weight:bold;">
+          <span style="color:var(--green);">${yesPct}% Habens getan</span>
+          <span>${100-yesPct}% Noch nie</span>
+        </div>
+        <p style="margin-top:20px; font-size:1.1rem; font-weight:bold; color:var(--primary);">Alle die mit "Ja" gestimmt haben: TRINKEN! 🍺</p>
+      </div>
+    `;
+  },
+
+  renderBlitz() {
+    const s = this.state;
+    let html = `
+      <div style="text-align:center; padding:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+            <div style="font-size:1.5rem; font-weight:bold; color:${s.timeLeft < 10 ? 'var(--primary)' : 'inherit'}">⏱️ ${s.timeLeft}s</div>
+            <div style="font-weight:bold;">Karten: ${s.usedCards.length}</div>
+        </div>
+
+        <div class="card" style="min-height:200px; display:flex; flex-direction:column; justify-content:center; padding:40px 20px; background:white; animation: pop 0.2s both;">
+          <div style="font-size:1.3rem; color:var(--text-muted); margin-bottom:10px;">Ich hab noch nie...</div>
+          <div style="font-size:1.6rem; font-weight:bold; line-height:1.2;">${s.currentCard}</div>
+        </div>
+
+        <div style="margin-top:40px; display:grid; grid-template-columns:1fr; gap:15px;">
+           <button class="btn-primary" onclick="window.IchHabNochNie.blitzYes()">🍺 GETAN! (+1 Punkt)</button>
+           <button class="btn-primary btn-outline" onclick="window.IchHabNochNie.nextCard()">Skip / Nie gemacht</button>
+        </div>
+      </div>
+    `;
+    document.getElementById('play-content').innerHTML = html;
+  },
+
+  blitzYes() {
+    const s = this.state;
+    let name = 'Unbekannt';
+    if (s.isOnline) {
+      name = Multiplayer.players.find(p => p.id === (Multiplayer.myId || 'host-1'))?.name || 'Unbekannt';
+    } else {
+      // In offline Blitz, we assume the person holding the device is the 'active' one 
+      // or we just track it as a general 'Trinker' count if no specific player is selected
+      name = s.players[0]?.name || s.players[0] || 'Spieler 1';
+    }
+    if (name) s.drinkCounts[name] = (s.drinkCounts[name] || 0) + 1;
+    this.nextCard();
+  },
+
+  startBlitzTimer() {
+    const s = this.state;
+    if (this.blitzInterval) clearInterval(this.blitzInterval);
+    this.blitzInterval = setInterval(() => {
+      s.timeLeft--;
+      if (s.timeLeft <= 0) {
+        clearInterval(this.blitzInterval);
+        this.endGame();
+      }
+      this.renderCurrentScreen();
+    }, 1000);
+  },
+
+  endGame() {
+    this.state.phase = 'gameover';
+    Router.go('play');
+    this.renderGameOver();
+  },
+
+  renderGameOver() {
+    const s = this.state;
+    let rankHTML = '';
+    if (s.mode === 'blitz') {
+      const sorted = Object.entries(s.drinkCounts).sort((a,b) => b[1] - a[1]);
+      rankHTML = `
+        <h3 style="margin-bottom:20px;">Trink-Ranking</h3>
+        <div style="text-align:left; max-width:300px; margin:0 auto;">
+          ${sorted.map(([name, count], i) => `
+            <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;">
+              <span>${i+1}. ${name}</span>
+              <span style="font-weight:bold;">${count} Schlucke</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    document.getElementById('play-content').innerHTML = `
+      <div style="text-align:center; padding:40px 20px;">
+        <h1 style="font-family:'Abril Fatface', cursive; font-size:3rem; color:var(--primary); margin-bottom:20px;">Ende!</h1>
+        <div style="font-size:5rem; margin-bottom:30px;">🏁</div>
+        <p style="font-size:1.2rem; margin-bottom:40px;">Die Wahrheit ist raus... oder?</p>
+        
+        ${rankHTML}
+
+        <div style="margin-top:40px; display:flex; flex-direction:column; gap:10px;">
+          <button class="btn-primary" onclick="window.IchHabNochNie.open()">Nochmal spielen</button>
+          <button class="btn-primary btn-outline" onclick="location.reload()">Hauptmenü</button>
+        </div>
+      </div>
+    `;
+  },
+
+  /* ONLINE HOOKS */
+  renderHostSetup() { return this.renderSetup(); },
+  
+  collectOnlineSettings() {
+    return {
+      mode: this.state.mode,
+      activeCategories: this.state.activeCategories
+    };
+  },
+
+  onOnlineGameStart(settings) {
+    Object.assign(this.state, settings);
+    this.state.isOnline = true;
+    this.state.players = Multiplayer.players;
+    this.startGame();
+  },
+
+  syncSetup() {
+    Multiplayer.sendGameState({ type: 'setup_sync', settings: this.collectOnlineSettings() });
+  },
+
+  syncGame() {
+    const s = this.state;
+    Multiplayer.sendGameState({ type: 'sync', state: s });
+  },
+
+  handleOnlineData(data) {
+    const s = this.state;
+    if (data.type === 'setup_sync') {
+      Object.assign(s, data.settings);
+      this.renderSetup();
+    } else if (data.type === 'sync') {
+      Object.assign(s, data.state);
+      this.renderCurrentScreen();
+    } else if (data.type === 'ihn_vote' && Multiplayer.role === 'host') {
+      s.votes[data.senderId] = data.val;
+      this.syncGame();
+      this.renderCurrentScreen();
+    }
+  }
+};
+</script>
+<script>
 /* === kissmarrykill.js === */
 /* ===================================================
    Kiss Marry Kill - Logik (Off- und Online)
@@ -2810,6 +4551,707 @@ const KmkGame = {
   _updateHostLobby() {
     if (typeof UnifiedLobby !== 'undefined') {
       UnifiedLobby._updateHostLobby();
+    }
+  }
+};
+</script>
+<script>
+/* === koenigs_cup.js === */
+const KoenigsCup = {
+  name: "Königs-Cup",
+  tagline: "Klassisches Kartenspiel mit Trinkregeln.",
+  color: "#f59e0b",
+  shadow: "rgba(245, 158, 11, 0.4)",
+  glow: "rgba(245, 158, 11, 0.2)",
+  emoji: "👑",
+
+  state: {
+    mode: 'offline',
+    players: [],
+    deck: [],
+    drawnCards: [],
+    currentCard: null,
+    currentPlayerIndex: 0,
+    kingsDrawn: 0,
+    activeRules: [],
+    daumenmaster: null,
+    mates: {}, // { spielerIndex: [partnerIndices] }
+    phase: 'setup',
+    ruleAddedForThisCard: false,
+    mateAddedForThisCard: false,
+    enabledRanks: ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'],
+    bonusCardCounts: {}, // { 'B1': 1, 'B2': 0 }
+    customCards: [], // [{ name, desc, emoji, count: 1 }]
+    myName: ''
+  },
+
+  rules: {
+    'A': { name: 'Wasserfall', desc: 'Alle trinken gleichzeitig – niemand darf aufhören, bevor die Person links aufhört.', emoji: '🌊' },
+    '2': { name: 'Du', desc: 'Du darfst jemanden bestimmen, der trinken muss.', emoji: '👉' },
+    '3': { name: 'Ich', desc: 'Du musst selbst trinken.', emoji: '🍺' },
+    '4': { name: 'Frauen', desc: 'Alle Frauen in der Runde trinken.', emoji: '♀️' },
+    '5': { name: 'Daumenmeister', desc: 'Du bist jetzt Daumenmeister. Legst du deinen Daumen auf den Tisch, müssen alle folgen. Der Letzte trinkt.', emoji: '👍' },
+    '6': { name: 'Männer', desc: 'Alle Männer in der Runde trinken.', emoji: '♂️' },
+    '7': { name: 'Himmel', desc: 'Alle müssen die Hand heben. Der Letzte trinkt.', emoji: '☁️' },
+    '8': { name: 'Mate', desc: 'Wähle einen Trinkkumpan. Immer wenn einer trinkt, trinkt der andere mit.', emoji: '🔗' },
+    '9': { name: 'Reim', desc: 'Nenne ein Wort. Reihum muss gereimt werden. Wer stockt, trinkt.', emoji: '🎤' },
+    '10': { name: 'Kategorien', desc: 'Nenne eine Kategorie (z.B. Automarken). Reihum Begriffe nennen – wer stockt, trinkt.', emoji: '📊' },
+    'J': { name: 'Regel', desc: 'Erfinde eine neue Regel, die bis zum nächsten Buben gilt.', emoji: '📜' },
+    'Q': { name: 'Fragen', desc: 'Stelle eine Frage. Man darf nur mit einer Gegenfrage antworten. Wer normal antwortet, trinkt.', emoji: '❓' },
+    'K': { name: 'Königs-Cup', desc: 'Gieße etwas in den Cup. Wer den 4. König zieht, muss ihn leeren!', emoji: '👑' }
+  },
+
+  bonusRules: {
+    'B1': { name: 'T-Rex', desc: 'Deine Oberarme müssen an deinem Körper festkleben. Du darfst nur mit den Unterarmen agieren. Verstoß = Trinken!', emoji: '🦖' },
+    'B2': { name: 'DJ', desc: 'Du darfst das nächste Lied wählen. Wenn es jemand kritisiert, muss die Person trinken.', emoji: '🎧' },
+    'B3': { name: 'Mimik-Master', desc: 'Du darfst nicht mehr lächeln. Wer dich zum Lachen bringt, darf 2 verteilen. Lachst du, trinkst du 3.', emoji: '🤡' },
+    'B4': { name: 'Zeitmaschine', desc: 'Die Zeit steht still. Niemand darf sich bewegen, bis du "Go" sagst. Wer zuckt, trinkt.', emoji: '⏳' },
+    'B5': { name: 'Draufgänger', desc: 'Mache einen Handstand oder Purzelbaum – oder trinke 5 Schlucke zur Strafe.', emoji: '🦁' },
+    'B6': { name: 'Medusa', desc: 'Wenn du jemanden starr anblickst, muss dieser erstarren. Wer sich zuerst bewegt, trinkt.', emoji: '🐍' },
+    'B7': { name: 'Stummer Diener', desc: 'Du darfst bis zur nächsten Karte nicht mehr sprechen. Jedes Wort kostet einen Schluck.', emoji: '😶' },
+    'B8': { name: 'Flüsterpost', desc: 'Ab jetzt darf nur noch geflüstert werden. Wer laut spricht oder lacht, trinkt einen Strafschluck.', emoji: '🤫' },
+    'B9': { name: 'Linkshänder', desc: 'Alle müssen mit ihrer schwächeren Hand trinken. Bei Benutzung der starken Hand: Trinken!', emoji: '✍️' },
+    'B10': { name: 'Wikinger', desc: 'Setzt du dir die "Hörner" auf, müssen alle rudern. Der letzte Ruderer muss trinken.', emoji: '🛶' },
+    'B11': { name: 'Blaublütig', desc: 'Du bist adelig. Man darf dich nur mit "Eure Majestät" ansprechen. Wer es vergisst, trinkt.', emoji: '💎' }
+  },
+
+  open() {
+    Router.go('setup');
+    document.getElementById('setup-title').textContent = this.name;
+    this.renderSetup();
+  },
+
+  renderSetup() {
+    if (this.state.players.length === 0) {
+      this.state.players = ['Spieler 1', 'Spieler 2'];
+    }
+
+    document.getElementById('setup-content').innerHTML = `
+      <div class="card">
+        <div class="card-label">Modus wählen</div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+           <button class="btn-primary" style="margin:0; background:${this.state.mode === 'offline' ? 'var(--primary)' : 'var(--surface2)'};" onclick="KoenigsCup.state.mode='offline'; KoenigsCup.renderSetup();">Offline</button>
+           <button class="btn-primary" style="margin:0; background:${this.state.mode === 'online' ? 'var(--primary)' : 'var(--surface2)'};" onclick="UnifiedLobby.open(KoenigsCup)">Online</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">👥 Spieler (2-10)</div>
+        <div class="players-list" id="kc-players-list"></div>
+        <button class="btn-add" onclick="KoenigsCup.addPlayer()">＋ Spieler hinzufügen</button>
+      </div>
+
+      <!-- Settings Toggle -->
+      <div class="card" id="kc-settings-card">
+        <div class="card-label">⚙️ Karten & Regeln</div>
+        <button class="btn-primary" style="background:var(--surface2); color:var(--text); margin:0;" onclick="KoenigsCup.toggleSettingsUI()">Einstellungen bearbeiten ⚒️</button>
+      </div>
+
+      <button class="btn-primary" onclick="KoenigsCup.startGame()">Spiel starten 🚀</button>
+    `;
+    this.renderPlayersList();
+  },
+
+  toggleSettingsUI() {
+    const s = this.state;
+    const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+    
+    const div = document.createElement('div');
+    div.className = 'overlay-selection';
+    div.id = 'kc-settings-overlay';
+    div.style = 'position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:110; display:flex; align-items:center; justify-content:center; padding:20px; color:#fff; overflow-y:auto;';
+    
+    let rankTogglesHTML = ranks.map(r => {
+      const isEnabled = s.enabledRanks.includes(r);
+      const rule = this.rules[r];
+      return `
+        <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; border: 1px solid ${isEnabled ? 'var(--primary)' : 'var(--border)'}; opacity: ${isEnabled ? 1 : 0.5}; margin-bottom:5px;">
+           <div style="display:flex; align-items:center; gap:10px;">
+             <span style="font-size:1.4rem; flex-shrink:0;">${rule.emoji}</span>
+             <div style="text-align:left; padding-right:10px;">
+               <div style="font-weight:bold; font-size:1rem; color:var(--primary);">${r}: ${rule.name}</div>
+               <div style="font-size:0.75rem; color:var(--text-muted); line-height:1.3;">${rule.desc}</div>
+             </div>
+           </div>
+           <button class="btn-icon" style="flex-shrink:0;" onclick="KoenigsCup.toggleRank('${r}')">${isEnabled ? '✅' : '❌'}</button>
+        </div>
+      `;
+    }).join('');
+
+    let bonusTogglesHTML = Object.entries(this.bonusRules).map(([r, rule]) => {
+      const count = s.bonusCardCounts[r] || 0;
+      return `
+        <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; border: 1px solid ${count > 0 ? 'var(--secondary)' : 'var(--border)'}; opacity: ${count > 0 ? 1 : 0.6}; margin-bottom:5px; background: ${count > 0 ? 'var(--sec-dim)' : 'transparent'}">
+           <div style="display:flex; align-items:center; gap:10px; flex:1;">
+             <span style="font-size:1.4rem; flex-shrink:0;">${rule.emoji}</span>
+             <div style="text-align:left; padding-right:10px;">
+               <div style="font-weight:bold; font-size:1rem; color:var(--secondary);">${rule.name}</div>
+               <div style="font-size:0.75rem; color:var(--text-muted); line-height:1.3;">${rule.desc}</div>
+             </div>
+           </div>
+           <div style="display:flex; align-items:center; gap:10px; background:rgba(0,0,0,0.3); padding:5px 10px; border-radius:30px;">
+              <button class="btn-icon" style="font-size:1rem; padding:0; width:25px; height:25px;" onclick="KoenigsCup.updateBonusCount('${r}', -1)">-</button>
+              <span style="font-weight:bold; min-width:15px; text-align:center;">${count}</span>
+              <button class="btn-icon" style="font-size:1rem; padding:0; width:25px; height:25px;" onclick="KoenigsCup.updateBonusCount('${r}', 1)">+</button>
+           </div>
+        </div>
+      `;
+    }).join('');
+
+    let customCardsHTML = s.customCards.map((c, i) => `
+      <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:10px; margin-bottom:5px; background:var(--primary-dim); border:1px solid ${c.count > 0 ? 'var(--primary)' : 'var(--border)'}; opacity:${c.count > 0 ? 1 : 0.6}">
+         <div style="display:flex; align-items:center; gap:10px; flex:1;">
+            <span style="font-size:1.4rem;">${c.emoji}</span>
+            <div style="text-align:left;">
+              <div style="font-weight:bold; font-size:0.9rem;">${c.name}</div>
+              <div style="font-size:0.75rem;">${c.desc.substring(0,40)}...</div>
+            </div>
+         </div>
+         <div style="display:flex; align-items:center; gap:8px;">
+            <div style="display:flex; align-items:center; gap:5px; background:rgba(0,0,0,0.3); padding:3px 8px; border-radius:20px;">
+               <button class="btn-icon" style="font-size:0.8rem; width:20px; height:20px;" onclick="KoenigsCup.updateCustomCount(${i}, -1)">-</button>
+               <span style="font-size:0.9rem; font-weight:bold;">${c.count}</span>
+               <button class="btn-icon" style="font-size:0.8rem; width:20px; height:20px;" onclick="KoenigsCup.updateCustomCount(${i}, 1)">+</button>
+            </div>
+            <button class="btn-icon" style="color:var(--primary);" onclick="KoenigsCup.removeCustomCard(${i})">✕</button>
+         </div>
+      </div>
+    `).join('');
+
+    div.innerHTML = `
+      <div class="card" style="width:100%; max-width:500px; max-height:90vh; overflow-y:auto; position:relative;">
+        <h2 style="margin-bottom:20px;">⚙️ Karten-Einstellungen</h2>
+        
+        <div class="card-label">Standard-Karten</div>
+        <div style="display:grid; grid-template-columns: 1fr; max-height:350px; overflow-y:auto; margin-bottom:20px; padding-right:5px; background:rgba(0,0,0,0.2); border-radius:10px; padding:10px;">
+          ${rankTogglesHTML}
+        </div>
+
+        <div class="card-label" style="color:var(--secondary);">✨ Bonus-Karten (Ganz am Ende ins Deck gemischt)</div>
+        <div style="display:grid; grid-template-columns: 1fr; max-height:280px; overflow-y:auto; margin-bottom:20px; padding-right:5px; background:rgba(0,0,0,0.2); border-radius:10px; padding:10px;">
+          ${bonusTogglesHTML}
+        </div>
+
+        <div class="card-label">Eigene Karte hinzufügen</div>
+        <div class="card" style="background:var(--surface2); padding:15px; margin-bottom:20px; border:1px solid var(--border);">
+           <div style="display:grid; grid-template-columns: 80px 1fr; gap:10px; margin-bottom:10px;">
+             <input type="text" id="cc-emoji" class="player-input" placeholder="🎨" style="margin:0; text-align:center;">
+             <input type="text" id="cc-name" class="player-input" placeholder="Karten-Name" style="margin:0; width:100%; box-sizing:border-box;">
+           </div>
+           <textarea id="cc-desc" class="player-input" placeholder="Was passiert bei dieser Karte?" style="margin-bottom:12px; width:100%; box-sizing:border-box; min-height:60px;"></textarea>
+           <button class="btn-primary" style="margin:0; width:100%;" onclick="KoenigsCup.addCustomCard()">+ Hinzufügen</button>
+        </div>
+
+        ${s.customCards.length > 0 ? `
+          <div class="card-label">Deine Extra-Karten</div>
+          <div style="max-height:200px; overflow-y:auto; margin-bottom:20px;">
+            ${customCardsHTML}
+          </div>
+        ` : ''}
+
+        <button class="btn-primary" onclick="document.getElementById('kc-settings-overlay').remove()">Fertig ✅</button>
+      </div>
+    `;
+    document.body.appendChild(div);
+  },
+
+  toggleRank(r) {
+    const s = this.state;
+    if (s.enabledRanks.includes(r)) {
+      if (s.enabledRanks.length + s.customCards.filter(c => c.count > 0).length > 2) {
+        s.enabledRanks = s.enabledRanks.filter(rank => rank !== r);
+      } else {
+        alert("Du brauchst mindestens 2 verschiedene Karten-Typen!");
+      }
+    } else {
+      s.enabledRanks.push(r);
+    }
+    this.refreshSettingsUI();
+  },
+
+  updateBonusCount(r, delta) {
+    const s = this.state;
+    if (!s.bonusCardCounts[r]) s.bonusCardCounts[r] = 0;
+    s.bonusCardCounts[r] = Math.max(0, Math.min(99, s.bonusCardCounts[r] + delta));
+    this.refreshSettingsUI();
+  },
+
+  updateCustomCount(idx, delta) {
+    const s = this.state;
+    if (s.customCards[idx]) {
+      s.customCards[idx].count = Math.max(0, Math.min(99, (s.customCards[idx].count || 0) + delta));
+      this.refreshSettingsUI();
+    }
+  },
+
+  addCustomCard() {
+    const emoji = document.getElementById('cc-emoji').value.trim() || '🃏';
+    const name = document.getElementById('cc-name').value.trim();
+    const desc = document.getElementById('cc-desc').value.trim();
+
+    if (name && desc) {
+      this.state.customCards.push({ emoji, name, desc, count: 1 });
+      this.refreshSettingsUI();
+    } else {
+      alert("Bitte Name und Beschreibung eingeben!");
+    }
+  },
+
+  removeCustomCard(idx) {
+    this.state.customCards.splice(idx, 1);
+    this.refreshSettingsUI();
+  },
+
+  refreshSettingsUI() {
+    const overlay = document.getElementById('kc-settings-overlay');
+    if (overlay) overlay.remove();
+    this.toggleSettingsUI();
+  },
+
+  renderPlayersList() {
+    const list = document.getElementById('kc-players-list');
+    if (!list) return;
+    list.innerHTML = this.state.players.map((p, i) => `
+      <div class="player-row">
+        <div class="player-avatar" style="background:var(--primary);">${i + 1}</div>
+        <input type="text" class="player-input" value="${p}" onchange="KoenigsCup.updatePlayer(${i}, this.value)">
+        ${this.state.players.length > 2 ? `<button class="btn-icon" onclick="KoenigsCup.removePlayer(${i})">✕</button>` : ''}
+      </div>
+    `).join('');
+  },
+
+  addPlayer() {
+    if (this.state.players.length < 10) {
+      this.state.players.push(`Spieler ${this.state.players.length + 1}`);
+      this.renderPlayersList();
+    }
+  },
+
+  removePlayer(idx) {
+    if (this.state.players.length > 2) {
+      this.state.players.splice(idx, 1);
+      this.renderPlayersList();
+    }
+  },
+
+  updatePlayer(idx, val) {
+    if (val.trim()) this.state.players[idx] = val.trim();
+  },
+
+  startGame() {
+    this.state.phase = 'game';
+    this.state.currentPlayerIndex = 0;
+    this.state.kingsDrawn = 0;
+    this.state.activeRules = [];
+    this.state.daumenmaster = null;
+    this.state.mates = {};
+    this.state.drawnCards = [];
+    this.state.ruleAddedForThisCard = false;
+    this.state.mateAddedForThisCard = false;
+    this.state.bonusCardCounts = this.state.bonusCardCounts || {};
+    this.initDeck();
+    
+    Router.go('play');
+    document.getElementById('play-game-name').textContent = this.name;
+    this.renderGame();
+    
+    if (this.state.mode === 'online') {
+       this.syncState();
+    }
+  },
+
+  initDeck() {
+    const suits = ['♠', '♥', '♦', '♣'];
+    const ranks = this.state.enabledRanks;
+    this.state.deck = [];
+    
+    // Add standard cards
+    for (const s of suits) {
+      for (const r of ranks) {
+        this.state.deck.push({ 
+          suit: s, 
+          rank: r, 
+          color: (s === '♥' || s === '♦') ? '#ff3366' : '#2d3436' 
+        });
+      }
+    }
+
+    // Add bonus cards based on count
+    Object.entries(this.state.bonusCardCounts || {}).forEach(([rank, count]) => {
+       if (count <= 0) return;
+       const rule = this.bonusRules[rank];
+       for (let i = 0; i < count; i++) {
+         this.state.deck.push({
+            suit: '✨',
+            rank: 'B',
+            name: rule.name,
+            desc: rule.desc,
+            emoji: rule.emoji,
+            color: 'var(--secondary)'
+         });
+       }
+    });
+
+    // Add custom cards based on count
+    this.state.customCards.forEach(c => {
+       const loopCount = c.count || 0;
+       if (loopCount <= 0) return;
+       for (let i = 0; i < loopCount; i++) {
+         this.state.deck.push({
+           suit: '⭐',
+           rank: 'C',
+           name: c.name,
+           desc: c.desc,
+           emoji: c.emoji,
+           color: 'var(--primary)'
+         });
+       }
+    });
+    this.shuffleDeck();
+  },
+
+  shuffleDeck() {
+    for (let i = this.state.deck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [this.state.deck[i], this.state.deck[j]] = [this.state.deck[j], this.state.deck[i]];
+    }
+  },
+
+  drawCard() {
+    if (this.state.phase === 'gameover' || this.state.deck.length === 0) return;
+    
+    const card = this.state.deck.pop();
+    this.state.currentCard = card;
+    this.state.drawnCards.push(card);
+
+    if (card.rank === 'K') {
+      this.state.kingsDrawn++;
+      if (this.state.kingsDrawn === 4) {
+        this.state.phase = 'gameover';
+      }
+    }
+
+    if (card.rank === '5') {
+       this.state.daumenmaster = this.state.players[this.state.currentPlayerIndex];
+    }
+    
+    // Rule updates
+    if (card.rank === 'J') {
+       this.state.activeRules = []; 
+    }
+
+    this.renderGame();
+
+    // Trigger overlays ONLY once when card is drawn
+    if (card.rank === 'J') {
+       this.renderRuleInput();
+    }
+    if (card.rank === '8') {
+       this.renderMateSelection();
+    }
+
+    if (this.state.mode === 'online') this.syncState();
+  },
+
+  nextPlayer() {
+    this.state.currentCard = null;
+    this.state.ruleAddedForThisCard = false;
+    this.state.mateAddedForThisCard = false;
+    this.state.currentPlayerIndex = (this.state.currentPlayerIndex + 1) % this.state.players.length;
+    this.renderGame();
+    if (this.state.mode === 'online') this.syncState();
+  },
+
+  renderGame() {
+    const s = this.state;
+    let content = '';
+
+    if (s.phase === 'gameover') {
+      return this.renderGameOver();
+    }
+
+    const currentPlayerName = s.players[s.currentPlayerIndex] ? (s.players[s.currentPlayerIndex].name || s.players[s.currentPlayerIndex]) : 'Unbekannt';
+    
+    let rule = null;
+    if (s.currentCard) {
+      if (s.currentCard.rank === 'C') {
+        rule = { name: s.currentCard.name, desc: s.currentCard.desc, emoji: s.currentCard.emoji };
+      } else if (s.currentCard.rank === 'B') {
+        // Find bonus rule by name (simpler than storing rank index)
+        rule = Object.values(this.bonusRules).find(br => br.name === s.currentCard.name);
+      } else {
+        rule = this.rules[s.currentCard.rank];
+      }
+    }
+
+    // Online indicators
+    const isOffline = s.mode === 'offline';
+    const isMyTurn = isOffline || (s.players[s.currentPlayerIndex] && s.players[s.currentPlayerIndex].id === Multiplayer.myId);
+    const hostControls = s.mode === 'online' && Multiplayer.role === 'host' && !s.currentCard;
+
+    content = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <div class="card-label" style="margin:0;">🎴 Stapel: ${s.deck.length}</div>
+        <div style="display:flex; gap:5px;">
+           ${Array(4).fill(0).map((_, i) => `
+             <span style="font-size:1.4rem; filter: ${i < s.kingsDrawn ? 'none' : 'grayscale(1) opacity(0.3)'}; transition:all 0.3s;">❤️</span>
+           `).join('')}
+        </div>
+      </div>
+
+      <div style="text-align:center; min-height: 380px; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative;">
+        
+        ${!s.currentCard ? `
+          <div class="card-back" onclick="${isMyTurn ? 'KoenigsCup.drawCard()' : ''}" style="width:220px; height:310px; background:linear-gradient(135deg, ${isMyTurn ? '#1e293b, #0f172a' : '#475569, #1e293b'}); border-radius:15px; border:8px solid #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.5); cursor:${isMyTurn ? 'pointer' : 'default'}; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; opacity:${isMyTurn?1:0.6};">
+             <div style="position:absolute; inset:0; opacity:0.1; background-image: radial-gradient(#fff 2px, transparent 2px); background-size: 20px 20px;"></div>
+             <span style="font-size:5rem; text-shadow: 0 0 20px rgba(245,158,11,0.5); z-index:1;">👑</span>
+          </div>
+          <div style="margin-top:20px; font-weight:900; font-size:1.2rem; color:var(--primary);">
+            ${isMyTurn ? 'Du bist dran!' : currentPlayerName + ' ist dran!'}
+          </div>
+          <p style="color:var(--text-muted); font-size:0.9rem;">${isMyTurn ? 'Tippe auf den Stapel' : 'Bitte warten...'}</p>
+        ` : `
+          <div class="card-front" style="width:220px; height:310px; background:#fff; color:#000; border-radius:15px; border:2px solid #e1e1e1; box-shadow: 0 15px 40px rgba(0,0,0,0.2); display:flex; flex-direction:column; justify-content:space-between; padding:15px; animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position:relative; overflow:hidden;">
+             <!-- Detail corners -->
+             <div style="display:flex; justify-content:space-between; font-size:1.8rem; font-weight:bold; color:${s.currentCard.color}">
+               <div style="display:flex; flex-direction:column; align-items:center; line-height:1;">
+                 <span>${s.currentCard.rank}</span>
+                 <span style="font-size:1.2rem;">${s.currentCard.suit}</span>
+               </div>
+               <div style="display:flex; flex-direction:column; align-items:center; line-height:1;">
+                 <span>${s.currentCard.rank}</span>
+                 <span style="font-size:1.2rem;">${s.currentCard.suit}</span>
+               </div>
+             </div>
+
+             <!-- Center Illustration -->
+             <div style="text-align:center; position:relative; z-index:2;">
+               <div style="font-size:5rem; filter:drop-shadow(0 4px 6px rgba(0,0,0,0.1));">${rule.emoji || s.currentCard.suit}</div>
+               ${['J','Q','K'].includes(s.currentCard.rank) ? `
+                 <div style="font-size:1.5rem; opacity:0.1; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) scale(4); z-index:-1; color:${s.currentCard.color}">${s.currentCard.suit}</div>
+               ` : ''}
+               ${s.currentCard.rank === 'C' ? `<div style="font-size:1.2rem; font-weight:bold; opacity:0.2; margin-top:10px;">CUSTOM</div>` : ''}
+             </div>
+
+             <!-- bottom corners -->
+             <div style="display:flex; justify-content:space-between; font-size:1.8rem; font-weight:bold; color:${s.currentCard.color}; transform:rotate(180deg);">
+               <div style="display:flex; flex-direction:column; align-items:center; line-height:1;">
+                 <span>${s.currentCard.rank}</span>
+                 <span style="font-size:1.2rem;">${s.currentCard.suit}</span>
+               </div>
+               <div style="display:flex; flex-direction:column; align-items:center; line-height:1;">
+                 <span>${s.currentCard.rank}</span>
+                 <span style="font-size:1.2rem;">${s.currentCard.suit}</span>
+               </div>
+             </div>
+          </div>
+          
+          <div style="margin-top:25px; text-align:center; animation: slideIn 0.4s both;">
+            <div style="display:inline-block; font-size:0.8rem; font-weight:900; background:${s.currentCard.rank === 'B' ? 'var(--sec-dim)' : 'var(--primary-dim)'}; color:${s.currentCard.rank === 'B' ? 'var(--secondary)' : 'var(--primary)'}; padding:2px 10px; border-radius:20px; text-transform:uppercase; margin-bottom:8px;">${s.currentCard.rank === 'C' ? 'EXTRA' : (s.currentCard.rank === 'B' ? 'BONUS' : s.currentCard.rank)} - AKTION</div>
+            <h2 style="font-family:'Abril Fatface', cursive; font-size:2.2rem; color:${s.currentCard.rank === 'B' ? 'var(--secondary)' : 'var(--primary)'}; margin:0 0 10px 0; line-height:1;">${rule.name}</h2>
+            <p style="font-size:1.1rem; line-height:1.4; color:var(--text); max-width:300px; margin:0 auto; opacity:0.9;">${rule.desc}</p>
+          </div>
+
+          ${isMyTurn ? `<button class="btn-primary" style="margin-top:25px; width:auto; padding: 12px 40px; box-shadow: 0 4px 15px var(--shadow);" onclick="KoenigsCup.nextPlayer()">Erledigt ✅</button>` : `<div style="margin-top:20px; color:var(--text-muted);">Tippe auf "Nächster Spieler" wenn du fertig bist...</div>`}
+        `}
+      </div>
+
+      ${hostControls ? `<div style="text-align:center; margin-top:20px;"><button class="btn-primary" style="background:var(--surface2);" onclick="KoenigsCup.toggleSettingsUI()">⚙️ Einstellungen im laufenden Spiel</button></div>` : ''}
+
+      </div>
+
+      <!-- Sonderanzeigen -->
+      <div style="margin-top:30px;">
+        ${s.daumenmaster ? `
+          <div class="card" style="background:var(--primary-dim); border:1px solid var(--primary); padding:10px 15px; display:flex; align-items:center; gap:10px; margin-bottom:10px; animation: slideIn 0.3s;">
+             <span style="font-size:1.5rem;">👍</span>
+             <div>
+               <div style="font-size:0.7rem; font-weight:900; text-transform:uppercase; opacity:0.7;">Daumenmaster</div>
+               <div style="font-weight:bold;">${s.daumenmaster.name || s.daumenmaster}</div>
+             </div>
+          </div>
+        ` : ''}
+
+        ${Object.keys(s.mates).length > 0 ? `
+           <div class="card-label">Trinkkumpane</div>
+           <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              ${Object.entries(s.mates).map(([p1, p2]) => `
+                <div class="p-chip" style="background:var(--sec-dim); color:var(--secondary);">🔗 ${(p1.name || p1)} & ${(p2.name || p2)}</div>
+              `).join('')}
+           </div>
+        ` : ''}
+
+        ${s.activeRules.length > 0 ? `
+           <div class="card-label" style="margin-top:15px;">Aktive Regeln</div>
+           <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              ${s.activeRules.map(r => `
+                <div class="p-chip">📜 ${r}</div>
+              `).join('')}
+           </div>
+        ` : ''}
+      </div>
+    `;
+
+    document.getElementById('play-content').innerHTML = content;
+  },
+
+  renderMateSelection() {
+    const s = this.state;
+    const others = s.players.filter(p => (p.id || p) !== (s.players[s.currentPlayerIndex].id || s.players[s.currentPlayerIndex]));
+    
+    const div = document.createElement('div');
+    div.className = 'overlay-selection';
+    div.id = 'kc-mate-overlay';
+    div.style = 'position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:100; display:flex; align-items:center; justify-content:center; padding:20px;';
+    div.innerHTML = `
+      <div class="card" style="width:100%; max-width:400px; text-align:center;">
+        <h2 style="margin-bottom:20px;">Wähle deinen Mate!</h2>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          ${others.map(p => {
+            const pName = p.name || p;
+            return `<button class="btn-primary" style="margin:0; font-size:0.9rem;" onclick="KoenigsCup.addMate('${pName}')">${pName}</button>`;
+          }).join('')}
+        </div>
+      </div>
+    `;
+    document.body.appendChild(div);
+  },
+
+  addMate(mateName) {
+    const s = this.state;
+    const current = s.players[s.currentPlayerIndex].name || s.players[s.currentPlayerIndex];
+    s.mates[current] = mateName;
+    const overlay = document.getElementById('kc-mate-overlay');
+    if (overlay) overlay.remove();
+    this.renderGame();
+    if (s.mode === 'online') this.syncState();
+  },
+
+  renderRuleInput() {
+    const div = document.createElement('div');
+    div.className = 'overlay-selection';
+    div.id = 'kc-rule-overlay';
+    div.style = 'position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:100; display:flex; align-items:center; justify-content:center; padding:20px;';
+    div.innerHTML = `
+      <div class="card" style="width:100%; max-width:400px; text-align:center;">
+        <h2 style="margin-bottom:20px;">Erfinde eine Regel</h2>
+        <input type="text" id="kc-new-rule" class="player-input" placeholder="z.B. Nicht mit dem Namen ansprechen" style="margin-bottom:15px;">
+        <button class="btn-primary" onclick="KoenigsCup.addRule(document.getElementById('kc-new-rule').value)">Bestätigen</button>
+      </div>
+    `;
+    document.body.appendChild(div);
+  },
+
+  addRule(text) {
+    if (text.trim()) {
+      this.state.activeRules.push(text.trim());
+    }
+    const overlay = document.getElementById('kc-rule-overlay');
+    if (overlay) overlay.remove();
+    this.renderGame();
+    if (this.state.mode === 'online') this.syncState();
+  },
+
+  renderGameOver() {
+    const s = this.state;
+    const loser = s.players[s.currentPlayerIndex].name || s.players[s.currentPlayerIndex];
+
+    document.getElementById('play-content').innerHTML = `
+      <div class="card" style="text-align:center; padding:50px 20px; animation: pop 0.6s both;">
+        <div style="font-size:5rem; margin-bottom:20px;">🤮</div>
+        <h1 style="font-family:'Abril Fatface', cursive; font-size:3rem; color:var(--primary); line-height:1.1; margin-bottom:10px;">PROST!</h1>
+        <h2 style="margin-bottom:30px;">${loser} muss den Cup leeren!</h2>
+        
+        <div style="background:var(--primary-dim); border:2px dashed var(--primary); padding:20px; border-radius:15px; margin-bottom:40px;">
+          <p style="font-weight:bold; color:var(--text);">Der 4. König wurde gezogen.</p>
+          <p style="font-size:0.9rem; color:var(--text-muted);">Spiel vorbei.</p>
+        </div>
+
+        ${s.mode === 'offline' || Multiplayer.role === 'host' ? `
+           <button class="btn-primary" onclick="KoenigsCup.startGame()">Nochmal spielen</button>
+        ` : '<p style="color:var(--text-muted);">Warte auf den Host für eine neue Runde...</p>'}
+        <button class="btn-primary" style="background:var(--surface2); color:var(--text); margin-top:10px;" onclick="location.reload()">Hauptmenü</button>
+      </div>
+    `;
+  },
+
+  /* ===== ONLINE HOOKS ===== */
+  renderHostSetup() {
+    return `
+      <div class="card">
+        <div class="card-label">⚙️ Spiel-Optionen</div>
+        <button class="btn-primary" style="background:var(--surface2); color:var(--text); margin:0;" onclick="KoenigsCup.toggleSettingsUI()">Karten bearbeiten ⚒️</button>
+      </div>
+    `;
+  },
+
+  collectOnlineSettings() {
+    return {
+      enabledRanks: this.state.enabledRanks,
+      bonusCardCounts: this.state.bonusCardCounts,
+      customCards: this.state.customCards
+    };
+  },
+
+  onOnlineGameStart(settings) {
+    const s = this.state;
+    s.phase = 'game';
+    s.enabledRanks = settings.enabledRanks || s.enabledRanks;
+    s.bonusCardCounts = settings.bonusCardCounts || {};
+    s.customCards = settings.customCards || [];
+    
+    s.currentPlayerIndex = 0;
+    s.kingsDrawn = 0;
+    s.activeRules = [];
+    s.daumenmaster = null;
+    s.mates = {};
+    s.drawnCards = [];
+    s.currentCard = null;
+    
+    // Only host inits deck
+    if (Multiplayer.role === 'host') {
+      this.initDeck();
+    }
+    
+    Router.go('play');
+    document.getElementById('play-game-name').textContent = this.name;
+    this.renderGame();
+  },
+
+  syncState() {
+    const data = {
+      type: 'sync',
+      state: {
+        deck: this.state.deck,
+        currentCard: this.state.currentCard,
+        drawnCards: this.state.drawnCards,
+        currentPlayerIndex: this.state.currentPlayerIndex,
+        kingsDrawn: this.state.kingsDrawn,
+        activeRules: this.state.activeRules,
+        daumenmaster: this.state.daumenmaster,
+        mates: this.state.mates,
+        phase: this.state.phase,
+        bonusCardCounts: this.state.bonusCardCounts
+      }
+    };
+
+    if (Multiplayer.role === 'host') {
+      Multiplayer.sendGameState(data);
+    } else if (Multiplayer.role === 'guest') {
+      Multiplayer.sendToHost(data);
+    }
+  },
+
+  handleOnlineData(data) {
+    if (data.type === 'sync') {
+      // Basic state update
+      Object.assign(this.state, data.state);
+      this.renderGame();
+
+      // If I am host, I must relay this guest update to all OTHER guests
+      if (Multiplayer.role === 'host') {
+        this.syncState();
+      }
     }
   }
 };
@@ -3926,7 +6368,7 @@ const UnifiedLobby = {
         <p style="color:var(--text-muted); font-size:0.85rem;">Teile diesen Code mit deinen Mitspielern</p>
       </div>
       <div class="card">
-        <div class="card-label">👥 Spieler (${game.state.players.length})</div>
+        <div class="card-label">${(game && game.name === 'Busfahrer' && game.state.cheatMode) ? '👤' : '👥'} Spieler (${game.state.players.length})</div>
         <div class="players-list">${playerListHTML}</div>
       </div>
       <div class="card">
@@ -4002,7 +6444,7 @@ const UnifiedLobby = {
         </div>
       </div>
       <div class="card">
-        <div class="card-label">👥 Spieler im Raum</div>
+        <div class="card-label">${(game && game.name === 'Busfahrer' && game.state.cheatMode) ? '👤' : '👥'} Spieler im Raum</div>
         <div class="players-list">${playerListHTML}</div>
       </div>
       <div class="card" style="text-align:center;">
