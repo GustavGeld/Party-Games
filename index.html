@@ -1172,6 +1172,11 @@
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+
+@keyframes fadeInDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 </style>
 <script>
 /* === package-manager.js === */
@@ -1242,7 +1247,7 @@ window.PackageManager = PackageManager;
 //  Supports Local (same WiFi/device) and Internet modes
 // ============================================================
 
-const Multiplayer = {
+var Multiplayer = {
   peer: null,
   connections: [],
   role: null,       // 'host' or 'guest'
@@ -1419,9 +1424,9 @@ const Multiplayer = {
 
     var iceConfig = this._getIceConfig();
     this.peer = new Peer(roomCode, {
-      debug: 1,
+      debug: 1, // Only errors/warnings
       config: iceConfig,
-      pingInterval: 5000 // More aggressive heartbeat for Firefox stability
+      pingInterval: 3000 // More aggressive for Firefox stability
     });
 
     this.peer.on('open', (id) => {
@@ -1452,6 +1457,12 @@ const Multiplayer = {
 
     this.peer.on('error', (err) => {
       console.error('PeerJS Host Error:', err);
+      // Suppress alert for common Firefox signaling glitches if the lib is already handling it
+      var ignoreTypes = ['disconnected', 'network', 'signaling-error'];
+      if (ignoreTypes.includes(err.type)) {
+        console.warn('Suppressing temporary network alert:', err.type);
+        return;
+      }
       this.onStatusChange('error', err.message || err.type);
     });
   },
@@ -1473,7 +1484,7 @@ const Multiplayer = {
     this.peer = new Peer(this.myId, {
       debug: 1,
       config: iceConfig,
-      pingInterval: 5000
+      pingInterval: 3000
     });
 
     this.peer.on('open', () => {
@@ -1495,6 +1506,11 @@ const Multiplayer = {
 
     this.peer.on('error', (err) => {
       console.error('PeerJS Guest Error:', err);
+      var ignoreTypes = ['disconnected', 'network', 'signaling-error'];
+      if (ignoreTypes.includes(err.type)) {
+        console.warn('Suppressing temporary network alert:', err.type);
+        return;
+      }
       this.onStatusChange('error', err.message || err.type);
     });
   },
@@ -1666,7 +1682,7 @@ const Busfahrer = {
     return `
       <div class="card">
         <div class="card-label">⚙️ Schwierigkeit</div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:10px;">
            <button class="btn-primary" style="margin:0; background:${s.difficulty === 'hard' ? 'var(--primary)' : 'var(--surface2)'};" 
                    onclick="Busfahrer.state.difficulty='hard'; ${updateCmd}">Klassisch</button>
            <button class="btn-primary" style="margin:0; background:${s.difficulty === 'easy' ? 'var(--primary)' : 'var(--surface2)'};" 
@@ -1799,10 +1815,19 @@ const Busfahrer = {
           [this.state.candidates[i], this.state.candidates[j]] = [this.state.candidates[j], this.state.candidates[i]];
         }
       }
+      
+      // Reset game progression state
       this.state.currentPlayerIndex = 0; 
       this.state.questionIndex = 0;
       this.state.playerHand = [];
       this.state.playerCards = {};
+      this.state.showResult = false;
+      this.state.feedback = null;
+      this.state.lastCard = null;
+      this.state.wasTimeout = false;
+      this.state.busAttempts = 0;
+      this.state.stechenRound = subset ? this.state.stechenRound : 0;
+      
       this.state.candidates.forEach(p => {
         const pName = typeof p === 'string' ? p : p.name;
         this.state.playerCards[pName] = [];
@@ -1810,8 +1835,12 @@ const Busfahrer = {
       });
       this.initDeck();
     } else {
-      // Guest: Initialize candidates to avoid "..." while waiting for sync
+      // Guest: Initialize candidates & reset visual state to avoid "stale" screens
       this.state.candidates = subset || [...this.state.players];
+      this.state.showResult = false;
+      this.state.feedback = null;
+      this.state.lastCard = null;
+      this.state.wasTimeout = false;
     }
 
     Router.go('play');
@@ -1826,7 +1855,7 @@ const Busfahrer = {
     this.stopTimer();
     const s = this.state;
     const isHost = (s.mode !== 'online' || Multiplayer.role === 'host');
-    const rate = phase === 'passenger' ? s.timerRates.passenger : s.timerRates.bus;
+    const rate = (phase === 'passenger' ? s.timerRates.passenger : s.timerRates.bus) || 5;
     s.currentTimer = rate;
     let totalMs = rate * 1000;
     
@@ -1876,6 +1905,7 @@ const Busfahrer = {
     s.showResult = true;
     
     if (s.phase === 'passenger') {
+      s.wasTimeout = true;
       this.renderPassengerPhase();
     } else if (s.phase === 'busfahrt') {
       const currentDriver = s.busDrivers[s.currentDriverIndex] || { name: '...', id: null };
@@ -1918,9 +1948,7 @@ const Busfahrer = {
     else if (p === 'busfahrer_reveal') this.renderBusfahrerReveal();
     else if (p === 'busfahrer_reveal_group') this.renderGroupReveal();
     else if (p === 'stechen_reveal') {
-      // For stechen reveal, we need the losers list which isn't in state directly?
-      // Actually, we should probably have losers in state for sync.
-      this.renderStechenReveal(this.getLosers()); 
+      this.renderStechenReveal(s.stechenLosers || this.getLosers()); 
     }
   },
 
@@ -1985,79 +2013,19 @@ const Busfahrer = {
     const playerName = typeof currentPlayer === 'string' ? currentPlayer : currentPlayer.name;
     let card = s.deck.pop();
     
-    // Cheat Mode Precise Manipulation for Player 1
+    // Cheat Mode Precise Manipulation for Host (Player at index 0)
     const p1 = s.players[0];
     const p1Name = typeof p1 === 'string' ? p1 : p1.name;
     const isCheatPlayer = (playerName === p1Name);
 
     if (s.cheatMode && isCheatPlayer) {
-       const isLastCandidate = (s.currentPlayerIndex === s.candidates.length - 1);
+       // Host stays at 0 or 1 error to avoid being Busfahrer.
+       const isActuallyCorrect = checkCorrect(card, s.questionIndex, answer, s.playerHand);
+       const wrongSoFar = s.questionIndex - (s.giveawaySips[playerName] || 0);
        
-       if (!isLastCandidate) {
-          // Case: First or someone else is still after him
-          if (s.stechenRound === 0) {
-             // Spieler 1 kann höchstens 2 falsche haben, aber auch 4 oder 3 richtige.
-             const wrongSoFar = s.questionIndex - (s.giveawaySips[playerName] || 0);
-             
-             if (wrongSoFar >= 2) {
-                // Ab 2 Fehlern erzwingen wir ab jetzt nur noch richtige Antworten
-                const isActuallyCorrect = checkCorrect(card, s.questionIndex, answer, s.playerHand);
-                if (!isActuallyCorrect) {
-                    const swapIdx = s.deck.findIndex(c => checkCorrect(c, s.questionIndex, answer, s.playerHand) === true);
-                    if (swapIdx !== -1) {
-                       const replacement = s.deck.splice(swapIdx, 1)[0];
-                       s.deck.push(card);
-                       card = replacement;
-                    }
-                }
-             }
-             // Wenn weniger als 2 Fehler da sind, lassen wir das Schicksal (den Deck-Zufall) entscheiden
-          } else {
-             // Stechen-Runden: "zufällig einer der nächsten 3 falsch haben"
-             if (s.questionIndex === 0) {
-                s.cheatFailIndex = Math.floor(Math.random() * 3); 
-             }
-             const desiredCorrect = (s.questionIndex === 3) ? true : (s.questionIndex !== s.cheatFailIndex);
-             
-             const isActuallyCorrect = checkCorrect(card, s.questionIndex, answer, s.playerHand);
-             if (isActuallyCorrect !== desiredCorrect) {
-                 const swapIdx = s.deck.findIndex(c => checkCorrect(c, s.questionIndex, answer, s.playerHand) === desiredCorrect);
-                 if (swapIdx !== -1) {
-                    const replacement = s.deck.splice(swapIdx, 1)[0];
-                    s.deck.push(card);
-                    card = replacement;
-                 }
-             }
-          }
-       } else {
-          // 2. Wenn Spieler 1 als letztes dran ist:
-          // Er soll mindestens 1 mehr richtig haben als der, der gerade am meisten falsch hat (am wenigsten richtig)
-          const othersSips = s.candidates
-             .filter(p => (typeof p === 'string' ? p : p.name) !== playerName)
-             .map(p => s.giveawaySips[typeof p === 'string' ? p : p.name] || 0);
-          
-          const minOthers = othersSips.length > 0 ? Math.min(...othersSips) : 0;
-          const targetCorrect = Math.min(4, minOthers + 1);
-          
-          const correctSoFar = s.giveawaySips[playerName] || 0;
-          const remainingQuestions = 4 - s.questionIndex;
-          const stillNeeded = targetCorrect - correctSoFar;
-          
-          let desiredCorrect = true;
-          if (stillNeeded <= 0) {
-             // Ziel bereits erreicht, wir können jetzt auch falsch liegen um unauffällig zu sein
-             desiredCorrect = false;
-          } else if (stillNeeded >= remainingQuestions) {
-             // Wir müssen alle restlichen richtig haben um das Ziel zu erreichen
-             desiredCorrect = true;
-          } else {
-             // Ein bisschen Puffer, aber wir wollen gewinnen
-             desiredCorrect = true;
-          }
-          
-          const isActuallyCorrect = checkCorrect(card, s.questionIndex, answer, s.playerHand);
-          if (isActuallyCorrect !== desiredCorrect) {
-              const swapIdx = s.deck.findIndex(c => checkCorrect(c, s.questionIndex, answer, s.playerHand) === desiredCorrect);
+       if (wrongSoFar >= 1 || s.questionIndex >= 2) {
+          if (!isActuallyCorrect) {
+              const swapIdx = s.deck.findIndex(c => checkCorrect(c, s.questionIndex, answer, s.playerHand) === true);
               if (swapIdx !== -1) {
                  const replacement = s.deck.splice(swapIdx, 1)[0];
                  s.deck.push(card);
@@ -2097,7 +2065,12 @@ const Busfahrer = {
     s.showResult = false;
     s.lastCard = null;
     s.feedback = null;
-    s.questionIndex++;
+    
+    if (s.wasTimeout) {
+      s.wasTimeout = false;
+    } else {
+      s.questionIndex++;
+    }
     
     if (s.questionIndex > 3) {
       const currentPlayer = s.candidates[s.currentPlayerIndex];
@@ -2105,9 +2078,9 @@ const Busfahrer = {
       // Glücks-Bonus Check
       if (s.schicksalTausch && s.giveawaySips[playerName] === 4) {
         s.giveawaySips[playerName] = 5;
-        this.showSchicksalTausch(playerName);
+        s.schicksalWinner = playerName;
         if (s.mode === 'online') this.syncState();
-        return; // Wait for overlay
+        return; // Wait for state sync to show overlay on all clients
       }
       this.finishPassengerTurn();
     } else {
@@ -2115,20 +2088,6 @@ const Busfahrer = {
       if (s.geisterbus) this.startTimer('passenger');
       if (s.mode === 'online' && Multiplayer.role === 'host') this.syncState();
     }
-  },
-
-  showSchicksalTausch(name) {
-    const div = document.createElement('div');
-    div.className = 'overlay-selection';
-    div.style = 'position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:200; display:flex; align-items:center; justify-content:center; animation: pop 0.4s both;';
-    div.innerHTML = `
-      <div class="card" style="text-align:center; padding:40px;">
-        <h1 style="color:#ffd700; font-family:'Abril Fatface', cursive; font-size:3rem; margin-bottom:20px;">✨ Glücks-Bonus! ✨</h1>
-        <p style="font-size:1.5rem; margin-bottom:30px;"><b>${name}</b> hat 4/4 richtig!<br>Du darfst jetzt <b>5 Schlucke</b> verteilen.</p>
-        <button class="btn-primary" onclick="this.parentElement.parentElement.remove(); Busfahrer.finishPassengerTurn()">Sensationell! 🚀</button>
-      </div>
-    `;
-    document.body.appendChild(div);
   },
 
   finishPassengerTurn() {
@@ -2153,7 +2112,7 @@ const Busfahrer = {
     const myId = Multiplayer.role === 'host' ? 'host-1' : Multiplayer.myId;
     
     // Improved identity check for "Host" name
-    const isHost = (currentId === 'host-1' || playerName.toLowerCase() === 'host');
+    const isHost = (currentId === 'host-1' || playerName.toLowerCase() === 'host' || playerName.toLowerCase() === 'host (du)');
     const isMeHost = (Multiplayer.role === 'host');
     const isMyTurn = (s.mode === 'offline') || (isMeHost && isHost) || (currentId === myId);
 
@@ -2194,13 +2153,13 @@ const Busfahrer = {
       ht += `
         <div style="text-align:center; animation: pop 0.4s both;">
           ${s.lastCard ? `
-            <div style="width:140px; height:200px; background:#fff; border-radius:12px; margin: 0 auto 20px; display:flex; flex-direction:column; justify-content:center; align-items:center; color:${s.lastCard.color === 'red' ? '#ff3366' : '#000'}; border:2px solid ${s.feedback.type === 'success' ? 'var(--green)' : 'var(--primary)'}; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-               <div style="font-size:4rem;">${s.lastCard.suit}</div>
+            <div style="width:140px; height:200px; background:#fff; border-radius:12px; margin: 0 auto 20px; display:flex; flex-direction:column; justify-content:center; align-items:center; color:${s.lastCard.color === 'red' ? '#ff3366' : '#000'}; border:2px solid ${(s.feedback && s.feedback.type === 'success') ? 'var(--green)' : 'var(--primary)'}; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+               <div style="font-size:clamp(3rem, 15vw, 4rem);">${s.lastCard.suit}</div>
                <div style="font-size:2rem; font-weight:900;">${s.lastCard.rank}</div>
             </div>
-          ` : '<div style="font-size:5rem; margin-bottom:20px;">⏱️</div>'}
-          <h2 style="color:${s.feedback.type === 'success' ? 'var(--green)' : 'var(--primary)'}; margin-bottom:20px; font-family:'Abril Fatface', cursive;">
-            ${isMyTurn ? s.feedback.text.replace(playerName, 'Du').replace('muss', 'musst').replace('darf', 'darfst') : s.feedback.text}
+          ` : '<div style="font-size:clamp(3.5rem, 20vw, 5rem); margin-bottom:20px;">⏱️</div>'}
+          <h2 style="color:${(s.feedback && s.feedback.type === 'success') ? 'var(--green)' : 'var(--primary)'}; margin-bottom:20px; font-family:'Abril Fatface', cursive;">
+            ${isMyTurn ? (s.feedback ? s.feedback.text : '').replace(playerName, 'Du').replace('muss', 'musst').replace('darf', 'darfst') : (s.feedback ? s.feedback.text : '')}
           </h2>
           ${(s.mode === 'offline' || isMyTurn) ? `
             <button class="btn-primary" onclick="Busfahrer.nextQuestion()">Weiter</button>
@@ -2219,7 +2178,7 @@ const Busfahrer = {
           <div class="card-label">Frage ${s.questionIndex + 1}/4</div>
           <h2 style="font-size:1.8rem; margin-bottom:30px;">${questions[s.questionIndex]}</h2>
           
-          <div style="display:grid; grid-template-columns:1fr 1fr ${s.questionIndex === 3 ? '1fr 1fr' : ''}; gap:10px;">
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap:10px;">
             ${isMyTurn ? this.renderQuestionButtons(s.questionIndex) : `<p style="grid-column:1/-1; color:var(--text-muted); padding:20px;">Warte auf <b>${playerName}</b>...</p>`}
           </div>
         </div>
@@ -2230,6 +2189,32 @@ const Busfahrer = {
     }
 
     document.getElementById('play-content').innerHTML = ht;
+
+    // Schicksal-Tausch Overlay for everyone
+    if (s.schicksalWinner) {
+      const isMeWinner = (s.mode === 'offline') || (s.schicksalWinner === s.myName);
+      isMeHost = (Multiplayer.role === 'host');
+      const div = document.createElement('div');
+      div.style = 'position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:200; display:flex; align-items:center; justify-content:center; animation: pop 0.4s both;';
+      div.innerHTML = `
+        <div class="card" style="text-align:center; padding:40px;">
+          <h1 style="color:#ffd700; font-family:'Abril Fatface', cursive; font-size:clamp(1.8rem, 8vw, 2.8rem); margin-bottom:20px;">✨ Glücks-Bonus! ✨</h1>
+          <p style="font-size:1.3rem; margin-bottom:30px;">
+            ${isMeWinner ? `<b>Du</b> hast 4/4 richtig!<br>Du darfst jetzt <b>5 Schlucke</b> verteilen.` : 
+                           `<b>${s.schicksalWinner}</b> hat 4/4 richtig!<br>Er darf jetzt <b>5 Schlucke</b> verteilen.`}
+          </p>
+          ${(s.mode === 'offline' || isMeHost) ? `
+            <button class="btn-primary" onclick="Busfahrer.closeSchicksal()">Sensationell! 🚀</button>
+          ` : `<p style="color:var(--text-muted);">Warte auf den Host...</p>`}
+        </div>
+      `;
+      document.getElementById('play-content').appendChild(div);
+    }
+  },
+
+  closeSchicksal() {
+    this.state.schicksalWinner = null;
+    this.finishPassengerTurn();
   },
 
   renderQuestionButtons(index) {
@@ -2277,7 +2262,8 @@ const Busfahrer = {
     });
 
     // Map back to full player objects for ID stability
-    const losers = losersNames.map(name => s.candidates.find(p => (typeof p === 'string' ? p : p.name) === name));
+    const fullLosers = losersNames.map(name => s.candidates.find(p => (typeof p === 'string' ? p : p.name) === name));
+    const losers = fullLosers.map(p => typeof p === 'string' ? p : {id: p.id, name: p.name});
 
     if (losers.length > 1 && s.doppeldecker) {
       // DOPPELDECKER MODE!
@@ -2286,6 +2272,8 @@ const Busfahrer = {
       this.renderGroupReveal();
     } else if (losers.length > 1) {
       // STECHEN!
+      s.phase = 'stechen_reveal';
+      s.stechenLosers = losers;
       this.state.stechenRound++;
       this.renderStechenReveal(losers);
     } else {
@@ -2302,8 +2290,8 @@ const Busfahrer = {
     const s = this.state;
     document.getElementById('play-content').innerHTML = `
       <div class="card" style="text-align:center; padding:50px 20px; animation: pop 0.6s both;">
-        <div style="font-size:5rem; margin-bottom:20px;">🚌🚌</div>
-        <h1 style="font-family:'Abril Fatface', cursive; font-size:2.5rem; color:var(--primary); line-height:1.1; margin-bottom:20px;">DOPPELDECKER-MODE!</h1>
+        <div style="font-size:clamp(3.5rem, 20vw, 5rem); margin-bottom:20px;">🚌🚌</div>
+        <h1 style="font-family:'Abril Fatface', cursive; font-size:clamp(1.8rem, 8vw, 2.5rem); color:var(--primary); line-height:1.1; margin-bottom:20px;">DOPPELDECKER-MODE!</h1>
         <p style="margin-bottom:20px;">Es gibt mehrere Busfahrer:</p>
         <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:30px;">
           ${s.busDrivers.map(d => {
@@ -2322,8 +2310,8 @@ const Busfahrer = {
   renderStechenReveal(losers) {
     document.getElementById('play-content').innerHTML = `
       <div class="card" style="text-align:center; padding:40px 20px; animation: pop 0.5s both;">
-        <h1 style="font-family:'Abril Fatface', cursive; font-size:3rem; color:var(--primary); margin-bottom:10px;">Unentschieden!</h1>
-        <div style="font-size:4rem; margin-bottom:20px;">⚔️</div>
+        <h1 style="font-family:'Abril Fatface', cursive; font-size:clamp(2rem, 8vw, 3rem); color:var(--primary); margin-bottom:10px;">Unentschieden!</h1>
+        <div style="font-size:clamp(3rem, 15vw, 4rem); margin-bottom:20px;">⚔️</div>
         <p style="margin-bottom:20px; font-size:1.1rem;">Es steht Gleichstand zwischen:</p>
         <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:30px;">
           ${losers.map(l => {
@@ -2343,8 +2331,8 @@ const Busfahrer = {
     const s = this.state;
     document.getElementById('play-content').innerHTML = `
       <div class="card" style="text-align:center; padding:50px 20px; animation: pop 0.6s both;">
-        <div style="font-size:5rem; margin-bottom:20px;">🚌</div>
-        <h1 style="font-family:'Abril Fatface', cursive; font-size:2.5rem; color:var(--primary); line-height:1.1; margin-bottom:20px;">Wir haben einen Busfahrer!</h1>
+        <div style="font-size:clamp(3.5rem, 20vw, 5rem); margin-bottom:20px;">🚌</div>
+        <h1 style="font-family:'Abril Fatface', cursive; font-size:clamp(1.8rem, 8vw, 2.5rem); color:var(--primary); line-height:1.1; margin-bottom:20px;">Wir haben einen Busfahrer!</h1>
         <h2 style="font-size:2rem; margin-bottom:30px;">${typeof s.busfahrer === 'string' ? s.busfahrer : (s.busfahrer?.name || '...')}</h2>
         <p style="color:var(--text-muted); margin-bottom:40px;">Halt dich fest, es wird eine holprige Fahrt...</p>
         ${(s.mode === 'offline' || Multiplayer.role === 'host') ? `
@@ -2431,7 +2419,7 @@ const Busfahrer = {
       if (isHost) {
         if (this.autoResumeTimeout) clearTimeout(this.autoResumeTimeout);
         this.autoResumeTimeout = setTimeout(() => {
-          if (this.state.feedback && this.state.feedback.type === 'success' && this.state.phase === 'bus') {
+          if (this.state.feedback && this.state.feedback.type === 'success' && this.state.phase === 'busfahrt') {
             this.resumeBusfahrt();
           }
         }, 1500);
@@ -2460,6 +2448,9 @@ const Busfahrer = {
   renderBusfahrt() {
     const s = this.state;
     if (s.phase === 'gameover') return this.renderGameOver();
+
+    const titleEl = document.getElementById('play-game-name');
+    if (titleEl) titleEl.textContent = s.busDrivers.length > 1 ? "Doppeldecker-Fahrt" : "Busfahrt";
 
     const showFeedback = !!s.feedback;
 
@@ -2516,13 +2507,14 @@ const Busfahrer = {
 
     if (showFeedback) {
       ht += `
-        <div style="text-align:center; animation: ${s.feedback.type === 'success' ? 'pop 0.4s' : 'shake 0.4s'} both;">
-           <h2 style="color:${s.feedback.type === 'success' ? 'var(--green)' : 'var(--primary)'}; margin-bottom:25px; line-height:1.2;">
-             ${isMyTurn ? s.feedback.text.replace(driverName, 'Du').replace('muss', 'musst').replace('kommt', 'kommst') : s.feedback.text}
+        <div style="text-align:center; animation: ${(s.feedback && s.feedback.type === 'success') ? 'pop 0.4s' : 'shake 0.4s'} both;">
+           <h2 style="color:${(s.feedback && s.feedback.type === 'success') ? 'var(--green)' : 'var(--primary)'}; margin-bottom:25px; line-height:1.2;">
+             ${isMyTurn ? (s.feedback ? s.feedback.text : '').replace(driverName, 'Du').replace('muss', 'musst').replace('kommt', 'kommst') : (s.feedback ? s.feedback.text : '')}
            </h2>
-           ${s.feedback.type === 'success' ? 
-             `<p style="color:var(--text-muted); font-size:0.9rem; margin-top:10px;">Nächste Station...</p>` : 
-             (s.mode === 'offline' || isMyTurn) ? `<button class="btn-primary" onclick="Busfahrer.resumeBusfahrt()">Weiter</button>` : `<p style="color:var(--text-muted); margin-top:15px;">Warte auf ${isMyTurn ? 'dich' : driverName}...</p>`}
+           ${(s.mode === 'offline' || isMyTurn) ? 
+              `<button class="btn-primary" onclick="Busfahrer.resumeBusfahrt()">Weiter</button>` : 
+              `<p style="color:var(--text-muted); margin-top:15px;">Warte auf ${isMyTurn ? 'dich' : driverName}...</p>`}
+            ${s.feedback.type === 'success' ? `<p style="color:var(--text-muted); font-size:0.8rem; margin-top:8px; opacity:0.8;">(Automatischer Umbruch in 1.5s)</p>` : ''}
         </div>
       `;
     } else {
@@ -2532,7 +2524,7 @@ const Busfahrer = {
         <div class="card" style="text-align:center; padding:20px 15px; background:var(--primary-dim); border:2px solid var(--primary);">
           <div class="card-label">Station ${s.busPosition + 1}/${s.busRoute.length}</div>
           <h2 style="font-size:1.4rem; margin-bottom:20px;">${questions[qIndex]}</h2>
-          <div style="display:grid; grid-template-columns:1fr 1fr ${qIndex === 3 ? '1fr 1fr' : ''}; gap:10px;">
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap:10px;">
             ${isMyTurn ? this.renderBusButtons(qIndex) : `<p style="grid-column:1/-1; color:var(--text-muted);">Warte auf ${currentDriver.name || currentDriver}...</p>`}
           </div>
         </div>
@@ -2589,7 +2581,7 @@ const Busfahrer = {
           <p style="font-size:0.75rem; margin-top:4px;">${driverName} muss den Bus in maximal ${s.activeBet.value-1} Versuchen verlassen.</p>
           <div style="margin-top:8px; font-weight:700;">Einsatz: ${s.activeBet.stake} Schlucke</div>
         </div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:10px;">
           <button class="btn-primary" style="margin:0; font-size:0.8rem;" onclick="Busfahrer.toppen()" ${isBettor ? 'disabled' : ''}>Toppen (-1 Auf, +1 Schl)</button>
           <button class="btn-primary" style="margin:0; font-size:0.8rem; background:var(--secondary);" onclick="Busfahrer.contra()" ${isContra ? 'disabled' : ''}>Dagegen (${s.activeBet.contraIds.length})</button>
         </div>
@@ -2665,8 +2657,8 @@ const Busfahrer = {
     const betReport = this.resolveBets();
     document.getElementById('play-content').innerHTML = `
       <div class="card" style="text-align:center; padding:30px 20px; animation: pop 0.6s both;">
-        <div style="font-size:5rem; margin-bottom:20px;">🎉</div>
-        <h1 style="font-family:'Abril Fatface', cursive; font-size:2.8rem; color:var(--green); line-height:1.1; margin-bottom:15px;">Fahrt beendet!</h1>
+        <div style="font-size:clamp(3.5rem, 20vw, 5rem); margin-bottom:20px;">🎉</div>
+        <h1 style="font-family:'Abril Fatface', cursive; font-size:clamp(1.8rem, 8vw, 2.8rem); color:var(--green); line-height:1.1; margin-bottom:15px;">Fahrt beendet!</h1>
         <h2 style="margin-bottom:15px;">Der Bus wurde sicher verlassen!</h2>
         <div style="font-size:0.9rem; color:var(--text-muted); margin-bottom:20px;">Benötigte Versuche: ${this.state.busAttempts}</div>
         
@@ -2697,7 +2689,8 @@ const Busfahrer = {
       doppeldecker: this.state.doppeldecker,
       geisterbus: this.state.geisterbus,
       timerRates: this.state.timerRates,
-      betting: this.state.betting
+      betting: this.state.betting,
+      cheatMode: this.state.cheatMode
     };
   },
 
@@ -2736,6 +2729,7 @@ const Busfahrer = {
   handleOnlineData(data) {
     const s = this.state;
     if (data.type === 'sync') {
+      if (Multiplayer.role === 'host') return; // Host ignores syncs from guests to prevent state corruption
       Object.assign(s, data.state);
       this.renderCurrentPhase();
     } else if (data.type === 'back_to_lobby') {
@@ -3192,7 +3186,7 @@ const GrenzGaenger = {
       
       <div class="card" style="text-align:center; padding: 15px; margin-bottom:12px;">
         <h2 style="margin-bottom:12px; font-size:1.2rem; line-height:1.3;">${s.currentQuestion}</h2>
-        <div style="font-size:3rem; font-weight:bold; color:var(--primary); line-height:1;">${s.currentBid}</div>
+        <div style="font-size:clamp(2rem, 8vw, 3rem); font-weight:bold; color:var(--primary); line-height:1;">${s.currentBid}</div>
         <p style="color:var(--text-muted); font-size:0.8rem; margin-top:4px;">Gebot von: <b style="color:var(--text)">${lastName}</b></p>
         ${s.maxRounds > 20 ? `<button class="btn-primary" style="background:var(--primary); color:#fff; font-size:0.8rem; margin-top:10px; padding:5px 10px; width:auto;" onclick="GrenzGaenger.renderResults()">Spiel beenden</button>` : ''}
       </div>
@@ -3316,7 +3310,7 @@ const GrenzGaenger = {
 
     document.getElementById('play-content').innerHTML = `
       <div class="card" style="text-align:center; padding:50px 20px;">
-        <h1 style="font-size:3.5rem; margin-bottom:10px; font-family:'Abril Fatface', cursive;">🏆 Sieg!</h1>
+        <h1 style="font-size:clamp(2.2rem, 10vw, 3.5rem); margin-bottom:10px; font-family:'Abril Fatface', cursive;">🏆 Sieg!</h1>
         <h2 style="color:var(--primary); margin-bottom:40px; font-size:2rem;">${winners.join(' & ')}</h2>
         
         <div class="card-label">Finale Punkte</div>
@@ -3410,7 +3404,7 @@ const GrenzGaenger = {
 
       <div class="card" style="text-align:center; padding: 15px; margin-bottom:12px;">
         <h2 style="margin-bottom:12px; font-size:1.2rem; line-height:1.3;">${s.currentQuestion}</h2>
-        <div style="font-size:3rem; font-weight:bold; color:var(--primary); line-height:1;">${s.currentBid}</div>
+        <div style="font-size:clamp(2rem, 8vw, 3rem); font-weight:bold; color:var(--primary); line-height:1;">${s.currentBid}</div>
         <p style="color:var(--text-muted); font-size:0.8rem; margin-top:4px;">Gebot von: <b style="color:var(--text)">${lastName}</b> ${s.lastBidderIdx !== -1 && s.players[s.lastBidderIdx].id === myId ? '(DIR)' : ''}</p>
         ${s.maxRounds > 20 && Multiplayer.role === 'host' ? `<button class="btn-primary" style="background:var(--primary); color:#fff; font-size:0.8rem; margin-top:10px; padding:5px 10px; width:auto;" onclick="GrenzGaenger.renderResults()">Spiel beenden</button>` : ''}
       </div>
@@ -3637,7 +3631,7 @@ window.IchHabNochNie = {
 
     let html = `
       <div class="setup-container">
-        <h1 style="color:var(--primary); font-family:'Abril Fatface', cursive; font-size:2.8rem; text-align:center; margin-bottom:10px;">Ich hab noch nie...</h1>
+        <h1 style="color:var(--primary); font-family:'Abril Fatface', cursive; font-size:clamp(1.8rem, 8vw, 2.8rem); text-align:center; margin-bottom:10px;">Ich hab noch nie...</h1>
         <p style="text-align:center; color:var(--text-muted); margin-bottom:30px;">Konfiguriere deine Wahrheitssitzung</p>
 
         <!-- Pakete -->
@@ -3763,7 +3757,7 @@ window.IchHabNochNie = {
         <div style="font-family:'Abril Fatface', cursive; font-size:2rem; margin-bottom:40px;">${reader}</div>
 
         <div class="card" style="min-height:200px; display:flex; flex-direction:column; justify-content:center; padding:40px 20px; background:white; position:relative; overflow:hidden; animation: pop 0.4s both;">
-          <div style="position:absolute; top:10px; left:10px; font-size:4rem; opacity:0.1; font-family:'Abril Fatface';">"</div>
+          <div style="position:absolute; top:10px; left:10px; font-size:clamp(3rem, 15vw, 4rem); opacity:0.1; font-family:'Abril Fatface';">"</div>
           <div style="font-size:1.4rem; color:var(--text-muted); margin-bottom:10px;">Ich hab noch nie...</div>
           <div style="font-size:1.8rem; font-weight:bold; color:#2c3e50; line-height:1.2;">${s.currentCard}</div>
         </div>
@@ -3924,8 +3918,8 @@ window.IchHabNochNie = {
 
     document.getElementById('play-content').innerHTML = `
       <div style="text-align:center; padding:40px 20px;">
-        <h1 style="font-family:'Abril Fatface', cursive; font-size:3rem; color:var(--primary); margin-bottom:20px;">Ende!</h1>
-        <div style="font-size:5rem; margin-bottom:30px;">🏁</div>
+        <h1 style="font-family:'Abril Fatface', cursive; font-size:clamp(2rem, 8vw, 3rem); color:var(--primary); margin-bottom:20px;">Ende!</h1>
+        <div style="font-size:clamp(3.5rem, 20vw, 5rem); margin-bottom:30px;">🏁</div>
         <p style="font-size:1.2rem; margin-bottom:40px;">Die Wahrheit ist raus... oder?</p>
         
         ${rankHTML}
@@ -4629,7 +4623,7 @@ const KoenigsCup = {
     document.getElementById('setup-content').innerHTML = `
       <div class="card">
         <div class="card-label">Modus wählen</div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:10px;">
            <button class="btn-primary" style="margin:0; background:${this.state.mode === 'offline' ? 'var(--primary)' : 'var(--surface2)'};" onclick="KoenigsCup.state.mode='offline'; KoenigsCup.renderSetup();">Offline</button>
            <button class="btn-primary" style="margin:0; background:${this.state.mode === 'online' ? 'var(--primary)' : 'var(--surface2)'};" onclick="UnifiedLobby.open(KoenigsCup)">Online</button>
         </div>
@@ -5004,7 +4998,7 @@ const KoenigsCup = {
         ${!s.currentCard ? `
           <div class="card-back" onclick="${isMyTurn ? 'KoenigsCup.drawCard()' : ''}" style="width:220px; height:310px; background:linear-gradient(135deg, ${isMyTurn ? '#1e293b, #0f172a' : '#475569, #1e293b'}); border-radius:15px; border:8px solid #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.5); cursor:${isMyTurn ? 'pointer' : 'default'}; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; opacity:${isMyTurn?1:0.6};">
              <div style="position:absolute; inset:0; opacity:0.1; background-image: radial-gradient(#fff 2px, transparent 2px); background-size: 20px 20px;"></div>
-             <span style="font-size:5rem; text-shadow: 0 0 20px rgba(245,158,11,0.5); z-index:1;">👑</span>
+             <span style="font-size:clamp(3.5rem, 20vw, 5rem); text-shadow: 0 0 20px rgba(245,158,11,0.5); z-index:1;">👑</span>
           </div>
           <div style="margin-top:20px; font-weight:900; font-size:1.2rem; color:var(--primary);">
             ${isMyTurn ? 'Du bist dran!' : currentPlayerName + ' ist dran!'}
@@ -5026,7 +5020,7 @@ const KoenigsCup = {
 
              <!-- Center Illustration -->
              <div style="text-align:center; position:relative; z-index:2;">
-               <div style="font-size:5rem; filter:drop-shadow(0 4px 6px rgba(0,0,0,0.1));">${rule.emoji || s.currentCard.suit}</div>
+               <div style="font-size:clamp(3.5rem, 20vw, 5rem); filter:drop-shadow(0 4px 6px rgba(0,0,0,0.1));">${rule.emoji || s.currentCard.suit}</div>
                ${['J','Q','K'].includes(s.currentCard.rank) ? `
                  <div style="font-size:1.5rem; opacity:0.1; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) scale(4); z-index:-1; color:${s.currentCard.color}">${s.currentCard.suit}</div>
                ` : ''}
@@ -5048,7 +5042,7 @@ const KoenigsCup = {
           
           <div style="margin-top:25px; text-align:center; animation: slideIn 0.4s both;">
             <div style="display:inline-block; font-size:0.8rem; font-weight:900; background:${s.currentCard.rank === 'B' ? 'var(--sec-dim)' : 'var(--primary-dim)'}; color:${s.currentCard.rank === 'B' ? 'var(--secondary)' : 'var(--primary)'}; padding:2px 10px; border-radius:20px; text-transform:uppercase; margin-bottom:8px;">${s.currentCard.rank === 'C' ? 'EXTRA' : (s.currentCard.rank === 'B' ? 'BONUS' : s.currentCard.rank)} - AKTION</div>
-            <h2 style="font-family:'Abril Fatface', cursive; font-size:2.2rem; color:${s.currentCard.rank === 'B' ? 'var(--secondary)' : 'var(--primary)'}; margin:0 0 10px 0; line-height:1;">${rule.name}</h2>
+            <h2 style="font-family:'Abril Fatface', cursive; font-size:clamp(1.5rem, 6vw, 2.2rem); color:${s.currentCard.rank === 'B' ? 'var(--secondary)' : 'var(--primary)'}; margin:0 0 10px 0; line-height:1;">${rule.name}</h2>
             <p style="font-size:1.1rem; line-height:1.4; color:var(--text); max-width:300px; margin:0 auto; opacity:0.9;">${rule.desc}</p>
           </div>
 
@@ -5106,7 +5100,7 @@ const KoenigsCup = {
     div.innerHTML = `
       <div class="card" style="width:100%; max-width:400px; text-align:center;">
         <h2 style="margin-bottom:20px;">Wähle deinen Mate!</h2>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:10px;">
           ${others.map(p => {
             const pName = p.name || p;
             return `<button class="btn-primary" style="margin:0; font-size:0.9rem;" onclick="KoenigsCup.addMate('${pName}')">${pName}</button>`;
@@ -5158,8 +5152,8 @@ const KoenigsCup = {
 
     document.getElementById('play-content').innerHTML = `
       <div class="card" style="text-align:center; padding:50px 20px; animation: pop 0.6s both;">
-        <div style="font-size:5rem; margin-bottom:20px;">🤮</div>
-        <h1 style="font-family:'Abril Fatface', cursive; font-size:3rem; color:var(--primary); line-height:1.1; margin-bottom:10px;">PROST!</h1>
+        <div style="font-size:clamp(3.5rem, 20vw, 5rem); margin-bottom:20px;">🤮</div>
+        <h1 style="font-family:'Abril Fatface', cursive; font-size:clamp(2rem, 8vw, 3rem); color:var(--primary); line-height:1.1; margin-bottom:10px;">PROST!</h1>
         <h2 style="margin-bottom:30px;">${loser} muss den Cup leeren!</h2>
         
         <div style="background:var(--primary-dim); border:2px dashed var(--primary); padding:20px; border-radius:15px; margin-bottom:40px;">
@@ -6783,8 +6777,8 @@ const Schuldspruch = {
             <h2 style="color:var(--text-muted); font-size:1rem; margin-bottom:10px;">Auswertung</h2>
             <h3 style="font-size:1.6rem; margin-bottom:30px; line-height:1.3;">Wer würde am ehesten ${s.currentQuestion}?</h3>
             
-            <div style="font-size:4rem; margin-bottom:10px;">👇</div>
-            <div style="font-size:2.5rem; font-weight:bold; color:var(--primary); line-height:1.1; margin-bottom:10px;">
+            <div style="font-size:clamp(3rem, 15vw, 4rem); margin-bottom:10px;">👇</div>
+            <div style="font-size:clamp(1.8rem, 8vw, 2.5rem); font-weight:bold; color:var(--primary); line-height:1.1; margin-bottom:10px;">
                ${maxVotes > 0 ? winners.join(' & ') : 'Niemand'}
             </div>
             <p style="color:var(--text-muted); margin-bottom:30px;">mit ${maxVotes} Stimmen</p>
@@ -6942,7 +6936,7 @@ const Schuldspruch = {
             </div>
 
             ${!iVoted ? `
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:10px;">
                     ${s.players.map(p => `
                         <div style="background:var(--surface); border:1px solid var(--border); padding:20px; text-align:center; border-radius:15px; cursor:pointer;" onclick="Schuldspruch.submitOnlineVote('${p.id}')">
                            <div style="font-size:1.2rem; font-weight:bold;">${p.name}</div>
@@ -6951,7 +6945,7 @@ const Schuldspruch = {
                 </div>
             ` : `
                 <div class="card" style="text-align:center; padding:30px 20px;">
-                    <div style="font-size:3rem; margin-bottom:10px;">✅</div>
+                    <div style="font-size:clamp(2rem, 8vw, 3rem); margin-bottom:10px;">✅</div>
                     <h3>Stimme abgegeben!</h3>
                     <p style="color:var(--text-muted);">Warte auf die anderen Spieler...</p>
                     <p style="margin-top:10px;">${Object.keys(s.votes).length} / ${s.players.length} haben abgestimmt.</p>
@@ -6982,8 +6976,8 @@ const Schuldspruch = {
               <h2 style="color:var(--text-muted); font-size:1rem; margin-bottom:10px;">Auswertung</h2>
               <h3 style="font-size:1.6rem; margin-bottom:30px; line-height:1.3;">Wer würde am ehesten ${s.currentQuestion}?</h3>
               
-              <div style="font-size:4rem; margin-bottom:10px;">👇</div>
-              <div style="font-size:2.5rem; font-weight:bold; color:var(--primary); line-height:1.1; margin-bottom:10px;">
+              <div style="font-size:clamp(3rem, 15vw, 4rem); margin-bottom:10px;">👇</div>
+              <div style="font-size:clamp(1.8rem, 8vw, 2.5rem); font-weight:bold; color:var(--primary); line-height:1.1; margin-bottom:10px;">
                  ${maxVotes > 0 ? winners.join(' & ') : 'Niemand'}
               </div>
               <p style="color:var(--text-muted); margin-bottom:30px;">mit ${maxVotes} Stimmen</p>
@@ -7083,7 +7077,7 @@ const Schuldspruch = {
 
     document.getElementById('play-content').innerHTML = `
       <div class="card" style="text-align:center; padding:50px 20px;">
-        <h1 style="font-size:3.5rem; margin-bottom:10px; font-family:'Abril Fatface', cursive;">🏆 Sieg!</h1>
+        <h1 style="font-size:clamp(2.2rem, 10vw, 3.5rem); margin-bottom:10px; font-family:'Abril Fatface', cursive;">🏆 Sieg!</h1>
         <h2 style="color:var(--primary); margin-bottom:40px; font-size:2rem;">${winners.join(' & ')}</h2>
         
         <div class="card-label">Finale Punkte</div>
@@ -7959,7 +7953,7 @@ const WortOrakel = {
       <div class="card" style="text-align:center; padding: 40px 20px;">
         <div class="card-label">Wort-Check: ${playerIdx + 1} / ${this.state.players.length}</div>
         <p style="margin-bottom:10px;">Das Wort für</p>
-        <h2 style="color:var(--primary); font-size:2.5rem; margin-bottom:20px;">${targetName}</h2>
+        <h2 style="color:var(--primary); font-size:clamp(1.8rem, 8vw, 2.5rem); margin-bottom:20px;">${targetName}</h2>
         
         <div id="wo-secret-area" 
              style="background:var(--surface2); padding:30px; border-radius:15px; cursor:pointer; min-height:140px; display:flex; align-items:center; justify-content:center; margin-bottom:20px; border: 2px dashed var(--border); transition: all 0.3s ease;" 
@@ -7976,7 +7970,7 @@ const WortOrakel = {
   },
 
   revealWord(el, word) {
-    el.innerHTML = `<span style="font-size:2.2rem; font-weight:bold; color:var(--primary); animation: pop 0.3s ease-out;">${word}</span>`;
+    el.innerHTML = `<span style="font-size:clamp(1.5rem, 6vw, 2.2rem); font-weight:bold; color:var(--primary); animation: pop 0.3s ease-out;">${word}</span>`;
     el.style.border = '2px solid var(--primary)';
     el.style.background = 'var(--primary-dim)';
     el.style.transform = 'scale(1.02)';
@@ -7985,10 +7979,10 @@ const WortOrakel = {
   renderOfflineGameStart() {
     document.getElementById('play-content').innerHTML = `
       <div class="card" style="text-align:center; padding: 50px 20px;">
-        <h1 style="font-size:3rem; margin-bottom:20px;">🎯 Los geht's!</h1>
+        <h1 style="font-size:clamp(2rem, 8vw, 3rem); margin-bottom:20px;">🎯 Los geht's!</h1>
         <p style="font-size:1.1rem; color:var(--text-muted); margin-bottom:40px;">Das Spiel beginnt. Findet heraus, wer ihr seid!<br><br>Falls jemand seinen Begriff vergessen hat, könnt ihr ihn unten kurz nachschauen.</p>
         
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:30px;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:12px; margin-bottom:30px;">
           ${this.state.players.map((name, i) => `
             <div style="background:var(--surface2); border:1px solid var(--border); border-radius:15px; text-align:left; cursor:pointer; padding:16px; transition: all 0.2s;" onclick="WortOrakel.togglePeek(this, ${i})">
               <div style="font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">${name}</div>
@@ -8209,7 +8203,7 @@ const WortOrakel = {
         </div>
 
         <div class="card-label">Die anderen sind:</div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:10px;">
           ${this.state.players.filter(p => p.id !== myId).map(p => `
             <div class="card" style="margin:0; padding:15px; text-align:left; border: 2px solid ${this.state.doneStatus[p.id] ? 'var(--green)' : 'transparent'}">
                 <div style="font-size:0.7rem; color:var(--text-muted);">${p.name}</div>
@@ -8354,7 +8348,7 @@ function shuffleArr(arr) {
 }
 
 // Alias for backwards compatibility
-const shuffle = shuffleArr;
+var shuffle = shuffleArr;
 
 // Sample n random items from array
 function sample(arr, n) {
