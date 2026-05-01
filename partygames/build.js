@@ -154,11 +154,17 @@ function build() {
       console.log('\n🚀 Starte automatischen Upload zu GitHub...');
       const { execSync } = require('child_process');
       execSync('git add ../index.html .', { stdio: 'inherit' });
-      execSync('git commit -m "Auto-build update"', { stdio: 'inherit' });
+      
+      try {
+        execSync('git commit -m "Auto-build update"', { stdio: 'inherit' });
+      } catch (e) {
+        console.log('ℹ️ Keine neuen Änderungen zum Speichern.');
+      }
+      
       execSync('git push', { stdio: 'inherit' });
       console.log('\n✅ GitHub Upload erfolgreich!');
     } catch (e) {
-      console.warn('\n⚠️ GitHub Upload uebersprungen (evtl. keine Änderungen).');
+      console.warn('\n⚠️ GitHub Upload fehlgeschlagen oder abgebrochen.');
     }
   }
 }

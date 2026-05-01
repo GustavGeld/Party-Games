@@ -37,6 +37,10 @@ var Multiplayer = {
   INTERNET_ICE: {
     iceServers: [
       { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+      { urls: 'stun:stun2.l.google.com:19302' },
+      { urls: 'stun:stun3.l.google.com:19302' },
+      { urls: 'stun:stun4.l.google.com:19302' },
       {
         urls: 'turn:openrelay.metered.ca:80',
         username: 'openrelayproject',
@@ -46,8 +50,19 @@ var Multiplayer = {
         urls: 'turn:openrelay.metered.ca:443',
         username: 'openrelayproject',
         credential: 'openrelayproject'
+      },
+      {
+        urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+        username: 'openrelayproject',
+        credential: 'openrelayproject'
+      },
+      {
+        urls: ['turn:eu-0.turn.peerjs.com:3478', 'turn:us-0.turn.peerjs.com:3478'],
+        username: 'peerjs',
+        credential: 'peerjsp'
       }
-    ]
+    ],
+    iceCandidatePoolSize: 10
   },
 
   _getIceConfig: function() {
