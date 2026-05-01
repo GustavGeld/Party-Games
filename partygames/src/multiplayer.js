@@ -33,30 +33,51 @@ var Multiplayer = {
     ]
   },
 
-  // Internet: STUN + TURN for NAT traversal across different networks
-  INTERNET_ICE: {
+  // Metered.ca free TURN server (20GB/month free)
+  // Get your API key at: https://dashboard.metered.ca/signup?tool=turnserver
+  METERED_API_KEY: 'DEIN_API_KEY_HIER',
+
+  // Fallback: STUN-only (works on same network, not cross-network)
+  STUN_ONLY: {
     iceServers: [
       { urls: 'stun:stun.l.google.com:19302' },
-      {
-        urls: 'turn:openrelay.metered.ca:80',
-        username: 'openrelayproject',
-        credential: 'openrelayproject'
-      },
-      {
-        urls: 'turn:openrelay.metered.ca:80?transport=tcp',
-        username: 'openrelayproject',
-        credential: 'openrelayproject'
-      },
-      {
-        urls: 'turns:openrelay.metered.ca:443?transport=tcp',
-        username: 'openrelayproject',
-        credential: 'openrelayproject'
-      }
+      { urls: 'stun:stun1.l.google.com:19302' }
     ]
   },
 
-  _getIceConfig: function() {
-    return this.mode === 'local' ? this.LOCAL_ICE : this.INTERNET_ICE;
+  // Cached TURN credentials (fetched at runtime)
+  _cachedIceConfig: null,
+  _cacheTimestamp: 0,
+
+  _getIceConfig: async function() {
+    if (this.mode === 'local') return this.LOCAL_ICE;
+
+    // Use cached config if less than 10 minutes old
+    if (this._cachedIceConfig && (Date.now() - this._cacheTimestamp < 600000)) {
+      return this._cachedIceConfig;
+    }
+
+    // Fetch fresh TURN credentials from Metered.ca
+    if (this.METERED_API_KEY && this.METERED_API_KEY !== 'DEIN_API_KEY_HIER') {
+      try {
+        var response = await fetch(
+          'https://partygames.metered.live/api/v1/turn/credentials?apiKey=' + this.METERED_API_KEY
+        );
+        if (response.ok) {
+          var iceServers = await response.json();
+          this._cachedIceConfig = { iceServers: iceServers };
+          this._cacheTimestamp = Date.now();
+          console.log('TURN credentials fetched:', iceServers.length, 'servers');
+          return this._cachedIceConfig;
+        }
+      } catch (e) {
+        console.warn('Failed to fetch TURN credentials, using STUN-only:', e);
+      }
+    } else {
+      console.warn('No Metered API key set. Using STUN-only (cross-network will NOT work).');
+    }
+
+    return this.STUN_ONLY;
   },
 
   generateId: function() {
@@ -170,7 +191,7 @@ var Multiplayer = {
   // ============================================================
   //  Connection Management
   // ============================================================
-  createRoom: function(roomCode, hostName) {
+  createRoom: async function(roomCode, hostName) {
     this.role = 'host';
     this.myId = this.generateId();
     this.hostId = roomCode;
@@ -183,7 +204,7 @@ var Multiplayer = {
       try { this.peer.destroy(); } catch (e) {}
     }
 
-    var iceConfig = this._getIceConfig();
+    var iceConfig = await this._getIceConfig();
     this.peer = new Peer(roomCode, {
       debug: 1, // Only errors/warnings
       config: iceConfig,
@@ -228,7 +249,7 @@ var Multiplayer = {
     });
   },
 
-  joinRoom: function(roomCode) {
+  joinRoom: async function(roomCode) {
     this.role = 'guest';
     this.myId = this.generateId();
     this.hostId = roomCode;
@@ -241,7 +262,7 @@ var Multiplayer = {
       try { this.peer.destroy(); } catch (e) {}
     }
 
-    var iceConfig = this._getIceConfig();
+    var iceConfig = await this._getIceConfig();
     this.peer = new Peer(this.myId, {
       debug: 1,
       config: iceConfig,
