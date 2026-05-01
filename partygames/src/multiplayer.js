@@ -38,17 +38,12 @@ var Multiplayer = {
     iceServers: [
       { urls: 'stun:stun.l.google.com:19302' },
       {
-        urls: ['turn:eu-0.turn.peerjs.com:3478', 'turn:us-0.turn.peerjs.com:3478'],
+        urls: 'turn:eu-0.turn.peerjs.com:3478',
         username: 'peerjs',
         credential: 'peerjsp'
       },
       {
         urls: 'turn:openrelay.metered.ca:443',
-        username: 'openrelayproject',
-        credential: 'openrelayproject'
-      },
-      {
-        urls: 'turn:openrelay.metered.ca:443?transport=tcp',
         username: 'openrelayproject',
         credential: 'openrelayproject'
       }
@@ -217,14 +212,14 @@ var Multiplayer = {
     });
 
     this.peer.on('error', (err) => {
-      console.error('PeerJS Host Error:', err);
+      console.error('PeerJS Host Error:', err.type, err);
       // Suppress alert for common Firefox signaling glitches if the lib is already handling it
       var ignoreTypes = ['disconnected', 'network', 'signaling-error'];
       if (ignoreTypes.includes(err.type)) {
         console.warn('Suppressing temporary network alert:', err.type);
         return;
       }
-      this.onStatusChange('error', err.message || err.type);
+      this.onStatusChange('error', (err.message || err.type) + ' (' + err.type + ')');
     });
   },
 
@@ -265,13 +260,13 @@ var Multiplayer = {
     });
 
     this.peer.on('error', (err) => {
-      console.error('PeerJS Guest Error:', err);
+      console.error('PeerJS Guest Error:', err.type, err);
       var ignoreTypes = ['disconnected', 'network', 'signaling-error'];
       if (ignoreTypes.includes(err.type)) {
         console.warn('Suppressing temporary network alert:', err.type);
         return;
       }
-      this.onStatusChange('error', err.message || err.type);
+      this.onStatusChange('error', (err.message || err.type) + ' (' + err.type + ')');
     });
   },
 
