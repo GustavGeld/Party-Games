@@ -147,6 +147,20 @@ function build() {
   console.log(`\n✅ Build complete!`);
   console.log(`📦 Output: ${CONFIG.outputFile}`);
   console.log(`📊 Size: ${sizeKB} KB`);
+
+  // Automatischer Upload zu GitHub (nur wenn nicht im Watch-Modus)
+  if (!process.argv.includes('--watch') && !process.argv.includes('-w')) {
+    try {
+      console.log('\n🚀 Starte automatischen Upload zu GitHub...');
+      const { execSync } = require('child_process');
+      execSync('git add ../index.html .', { stdio: 'inherit' });
+      execSync('git commit -m "Auto-build update"', { stdio: 'inherit' });
+      execSync('git push', { stdio: 'inherit' });
+      console.log('\n✅ GitHub Upload erfolgreich!');
+    } catch (e) {
+      console.warn('\n⚠️ GitHub Upload uebersprungen (evtl. keine Änderungen).');
+    }
+  }
 }
 
 // Watch mode
