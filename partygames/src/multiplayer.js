@@ -37,14 +37,10 @@ var Multiplayer = {
   INTERNET_ICE: {
     iceServers: [
       { urls: 'stun:stun.l.google.com:19302' },
-      { urls: 'stun:stun1.l.google.com:19302' },
-      { urls: 'stun:stun2.l.google.com:19302' },
-      { urls: 'stun:stun3.l.google.com:19302' },
-      { urls: 'stun:stun4.l.google.com:19302' },
       {
-        urls: 'turn:openrelay.metered.ca:80',
-        username: 'openrelayproject',
-        credential: 'openrelayproject'
+        urls: ['turn:eu-0.turn.peerjs.com:3478', 'turn:us-0.turn.peerjs.com:3478'],
+        username: 'peerjs',
+        credential: 'peerjsp'
       },
       {
         urls: 'turn:openrelay.metered.ca:443',
@@ -55,14 +51,8 @@ var Multiplayer = {
         urls: 'turn:openrelay.metered.ca:443?transport=tcp',
         username: 'openrelayproject',
         credential: 'openrelayproject'
-      },
-      {
-        urls: ['turn:eu-0.turn.peerjs.com:3478', 'turn:us-0.turn.peerjs.com:3478'],
-        username: 'peerjs',
-        credential: 'peerjsp'
       }
-    ],
-    iceCandidatePoolSize: 10
+    ]
   },
 
   _getIceConfig: function() {
@@ -195,9 +185,9 @@ var Multiplayer = {
 
     var iceConfig = this._getIceConfig();
     this.peer = new Peer(roomCode, {
-      debug: 1, // Only errors/warnings
+      debug: 1, 
       config: iceConfig,
-      pingInterval: 3000 // More aggressive for Firefox stability
+      pingInterval: 5000 
     });
 
     this.peer.on('open', (id) => {
@@ -255,13 +245,12 @@ var Multiplayer = {
     this.peer = new Peer(this.myId, {
       debug: 1,
       config: iceConfig,
-      pingInterval: 3000
+      pingInterval: 5000
     });
 
     this.peer.on('open', () => {
       var conn = this.peer.connect(roomCode, {
-        reliable: true,
-        serialization: 'json'
+        reliable: true
       });
       this._setupConnection(conn);
     });
