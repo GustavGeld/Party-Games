@@ -33,16 +33,20 @@ var Multiplayer = {
     ]
   },
 
-  // Internet: STUN servers for NAT traversal across different networks
-  // NOTE: Free TURN servers (PeerJS, Metered open relay) have been discontinued.
-  // For TURN support, sign up at https://dashboard.metered.ca/signup?tool=turnserver
-  // and use their REST API to fetch dynamic credentials.
+  // Internet: STUN + TURN for NAT traversal across different networks
   INTERNET_ICE: {
     iceServers: [
       { urls: 'stun:stun.l.google.com:19302' },
-      { urls: 'stun:stun1.l.google.com:19302' },
-      { urls: 'stun:stun2.l.google.com:19302' },
-      { urls: 'stun:stun.services.mozilla.com:3478' }
+      {
+        urls: 'turn:openrelay.metered.ca:80',
+        username: 'openrelayproject',
+        credential: 'openrelayproject'
+      },
+      {
+        urls: 'turn:openrelay.metered.ca:443',
+        username: 'openrelayproject',
+        credential: 'openrelayproject'
+      }
     ]
   },
 
@@ -176,9 +180,9 @@ var Multiplayer = {
 
     var iceConfig = this._getIceConfig();
     this.peer = new Peer(roomCode, {
-      debug: 1, 
+      debug: 1, // Only errors/warnings
       config: iceConfig,
-      pingInterval: 5000 
+      pingInterval: 3000 // More aggressive for Firefox stability
     });
 
     this.peer.on('open', (id) => {
@@ -236,12 +240,13 @@ var Multiplayer = {
     this.peer = new Peer(this.myId, {
       debug: 1,
       config: iceConfig,
-      pingInterval: 5000
+      pingInterval: 3000
     });
 
     this.peer.on('open', () => {
       var conn = this.peer.connect(roomCode, {
-        reliable: true
+        reliable: true,
+        serialization: 'json'
       });
       this._setupConnection(conn);
     });
