@@ -33,20 +33,16 @@ var Multiplayer = {
     ]
   },
 
-  // Internet: STUN + TURN for NAT traversal across different networks
+  // Internet: STUN servers for NAT traversal across different networks
+  // NOTE: Free TURN servers (PeerJS, Metered open relay) have been discontinued.
+  // For TURN support, sign up at https://dashboard.metered.ca/signup?tool=turnserver
+  // and use their REST API to fetch dynamic credentials.
   INTERNET_ICE: {
     iceServers: [
       { urls: 'stun:stun.l.google.com:19302' },
-      {
-        urls: 'turn:eu-0.turn.peerjs.com:3478',
-        username: 'peerjs',
-        credential: 'peerjsp'
-      },
-      {
-        urls: 'turn:openrelay.metered.ca:443',
-        username: 'openrelayproject',
-        credential: 'openrelayproject'
-      }
+      { urls: 'stun:stun1.l.google.com:19302' },
+      { urls: 'stun:stun2.l.google.com:19302' },
+      { urls: 'stun:stun.services.mozilla.com:3478' }
     ]
   },
 
