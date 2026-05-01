@@ -34,7 +34,7 @@ var Multiplayer = {
   },
 
   // Metered.ca free TURN server (20GB/month free)
-  METERED_API_KEY: 'RgsNg5e1swSsv9SuQQPehMorQ-z0Zk1W4tWkxITA2CCtxBaf',
+  METERED_API_KEY: '866730fc4b6aab70642f34def5899a0b5caf',
 
   // Fallback: STUN-only (works on same network, not cross-network)
   STUN_ONLY: {
