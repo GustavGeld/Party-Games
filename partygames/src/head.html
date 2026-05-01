@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Party Games</title>
+  <!-- External libraries will be injected here -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Nunito:wght@400;600;700;800;900&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <!-- Styles and scripts will be injected by build.js before closing </head> -->
+  <script>
+    window.addEventListener('error', function(e) {
+      if (!document.getElementById('debug-log')) {
+        const div = document.createElement('div');
+        div.id = 'debug-log';
+        div.style.position = 'fixed';
+        div.style.top = '0';
+        div.style.left = '0';
+        div.style.background = 'rgba(255,0,0,0.8)';
+        div.style.color = 'white';
+        div.style.zIndex = '99999';
+        div.style.padding = '10px';
+        div.style.fontSize = '12px';
+        div.style.width = '100%';
+        div.style.pointerEvents = 'none';
+        document.documentElement.appendChild(div);
+      }
+      document.getElementById('debug-log').innerText += e.message + ' at ' + e.filename + ':' + e.lineno + '\n';
+    });
+  </script>

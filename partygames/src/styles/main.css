@@ -1,0 +1,761 @@
+
+    /* ===========================================
+       CSS CUSTOM PROPERTIES & RESET
+    =========================================== */
+    :root {
+      --bg:          #080812;
+      --surface:     #0f0f22;
+      --surface2:    #181830;
+      --surface3:    #1f1f3a;
+      --primary:     #ff3366;
+      --primary-dim: rgba(255, 51, 102, 0.13);
+      --primary-glow:rgba(255, 51, 102, 0.35);
+      --secondary:   #ffcc00;
+      --sec-dim:     rgba(255, 204, 0, 0.12);
+      --accent:      #7c3aed;
+      --cyan:        #00e5ff;
+      --green:       #00ff88;
+      --text:        #eeeeff;
+      --text-muted:  #6666aa;
+      --border:      rgba(255, 255, 255, 0.07);
+      --border-hover:rgba(255, 255, 255, 0.15);
+      --r:   18px;
+      --r-sm:11px;
+      --r-xs: 7px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    button { font-family: inherit; cursor: pointer; border: none; }
+    input  { font-family: inherit; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(ellipse 60% 50% at 15% 10%,  rgba(124,58,237,.14) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 85% 90%,  rgba(255,51,102,.10) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 50% at 75% 20%,  rgba(0,229,255,.06)  0%, transparent 50%);
+      color: var(--text);
+      font-family: 'Nunito', sans-serif;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ===========================================
+       SCREEN SYSTEM
+    =========================================== */
+    .screen {
+      display: none;
+      min-height: 100vh;
+      padding: 20px 20px 60px;
+      max-width: 580px;
+      margin: 0 auto;
+    }
+    .screen.active {
+      display: block;
+      animation: screenIn .38s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    @keyframes screenIn {
+      from { opacity: 0; transform: translateY(22px) scale(.98); }
+      to   { opacity: 1; transform: translateY(0)    scale(1);   }
+    }
+
+    /* ===========================================
+       HOME SCREEN
+    =========================================== */
+    .home-hero {
+      text-align: center;
+      padding: 52px 0 44px;
+    }
+
+    .home-logo {
+      display: block;
+      font-size: 4rem;
+      margin-bottom: 18px;
+      animation: float 3.5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0) rotate(-3deg); }
+      50%      { transform: translateY(-10px) rotate(3deg); }
+    }
+
+    .home-title {
+      font-family: 'Abril Fatface', cursive;
+      font-size: clamp(3rem, 11vw, 5rem);
+      line-height: .95;
+      background: linear-gradient(140deg, #ff3366 0%, #ffcc00 45%, #00e5ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 14px;
+    }
+
+    .home-sub {
+      color: var(--text-muted);
+      font-weight: 800;
+      font-size: .8rem;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+
+    .section-label {
+      font-size: .7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .22em;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .games-grid { display: grid; gap: 14px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+
+    /* Game card on home screen */
+    .game-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 26px 22px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      text-align: left;
+      width: 100%;
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+      position: relative;
+      overflow: hidden;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: rgba(255, 51, 102, 0.2);
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .game-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 25% 50%, var(--gc-glow, rgba(255,51,102,.1)), transparent 70%);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .game-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--gc-color, var(--primary));
+      box-shadow: 0 18px 52px var(--gc-shadow, rgba(255,51,102,.2));
+    }
+    .game-card:hover::before  { opacity: 1; }
+    .game-card:active { transform: translateY(-1px); }
+
+    .gc-icon { font-size: 3rem; flex-shrink: 0; line-height: 1; }
+    .gc-info { flex: 1; }
+
+    .gc-name {
+      font-family: 'Abril Fatface', cursive;
+      font-size: 2rem;
+      color: var(--gc-color, var(--primary));
+      line-height: 1.05;
+      margin-bottom: 4px;
+    }
+
+    .gc-tagline { color: var(--text-muted); font-weight: 700; font-size: .88rem; }
+
+    .gc-arrow {
+      color: var(--text-muted);
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      transition: transform .2s, color .2s;
+    }
+    .game-card:hover .gc-arrow {
+      transform: translateX(5px);
+      color: var(--gc-color, var(--primary));
+    }
+
+    /* ===========================================
+       SHARED COMPONENTS
+    =========================================== */
+    .screen-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      padding-top: 4px;
+    }
+
+    .btn-back {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all .2s;
+    }
+    .btn-back:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-dim); }
+
+    .screen-title {
+      font-family: 'Abril Fatface', cursive;
+      font-size: clamp(1.8rem, 6vw, 2.4rem);
+      color: var(--primary);
+      line-height: 1.1;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 22px;
+      margin-bottom: 14px;
+    }
+
+    .card-label {
+      font-size: .7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    /* Primary CTA button */
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary) 0%, #cc0033 100%);
+      color: #fff;
+      border: none;
+      border-radius: var(--r);
+      padding: 18px 24px;
+      font-size: 1.05rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 8px 32px var(--primary-glow);
+      margin-top: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.12), transparent);
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 42px var(--primary-glow); }
+    .btn-primary:hover::after { opacity: 1; }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { opacity: .35; transform: none; cursor: not-allowed; box-shadow: none; }
+
+    /* Success feedback for buttons */
+    .btn-success {
+      background: linear-gradient(135deg, #00ff88 0%, #00cc66 100%) !important;
+      color: #003310 !important;
+      box-shadow: 0 8px 32px rgba(0, 255, 136, 0.3) !important;
+    }
+
+    /* ===========================================
+       SETUP: PLAYER LIST
+    =========================================== */
+    .players-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .player-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn .24s ease both;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-16px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .player-avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff;
+      font-weight: 900;
+      font-size: .82rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .player-input {
+      flex: 1;
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .player-input:focus   { border-color: var(--primary); }
+    .player-input::placeholder { color: var(--text-muted); font-weight: 600; }
+
+    .btn-icon {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: .95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all .2s;
+    }
+    .btn-icon:hover { background: rgba(255,51,102,.1); border-color: var(--primary); color: var(--primary); }
+
+    .btn-add {
+      width: 100%;
+      background: transparent;
+      border: 2px dashed var(--border);
+      border-radius: var(--r-sm);
+      color: var(--text-muted);
+      font-size: .88rem;
+      font-weight: 800;
+      padding: 12px;
+      transition: all .2s;
+      letter-spacing: .05em;
+    }
+    .btn-add:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,229,255,.05); }
+
+    /* ===========================================
+       SETUP: PACKAGES
+    =========================================== */
+    .packages-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .pkg-card {
+      background: var(--surface2);
+      border: 2px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 16px 14px;
+      cursor: pointer;
+      position: relative;
+      user-select: none;
+      transition: border-color .2s, background .2s;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: rgba(255, 51, 102, 0.3);
+      -webkit-touch-callout: none;
+      min-height: 44px;
+    }
+    .pkg-card:hover { border-color: var(--border-hover); }
+    .pkg-card.active {
+      border-color: var(--primary);
+      background: var(--primary-dim);
+      box-shadow: 0 0 0 2px var(--primary-glow);
+    }
+    .pkg-card:active {
+      transform: scale(0.98);
+    }
+
+    .pkg-check {
+      position: absolute;
+      top: 10px; right: 12px;
+      color: var(--primary);
+      font-weight: 900;
+      font-size: .95rem;
+      opacity: 0;
+      transform: scale(0) rotate(-20deg);
+      transition: all .22s cubic-bezier(.34, 1.56, .64, 1);
+    }
+    .pkg-card.active .pkg-check { opacity: 1; transform: scale(1) rotate(0); }
+
+    .pkg-emoji  { font-size: 1.7rem; margin-bottom: 7px; line-height: 1; }
+    .pkg-name   { font-weight: 900; font-size: .88rem; margin-bottom: 3px; }
+    .pkg-count  { font-size: .7rem; color: var(--text-muted); font-weight: 700; }
+
+    /* ===========================================
+       SETUP: PENALTY SLIDER
+    =========================================== */
+    .penalty-big {
+      font-family: 'Abril Fatface', cursive;
+      font-size: 4.5rem;
+      color: var(--primary);
+      text-align: center;
+      line-height: 1;
+      text-shadow: 0 0 36px var(--primary-glow);
+    }
+    .penalty-unit {
+      text-align: center;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: .82rem;
+      margin-bottom: 20px;
+      margin-top: 2px;
+    }
+
+    .styled-range {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      outline: none;
+      cursor: pointer;
+      background: linear-gradient(
+        to right,
+        var(--primary) 0%,
+        var(--primary) var(--pct, 22%),
+        var(--surface2) var(--pct, 22%),
+        var(--surface2) 100%
+      );
+      transition: background .1s;
+    }
+    .styled-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 0 4px rgba(255,51,102,.22), 0 4px 12px rgba(255,51,102,.4);
+      transition: box-shadow .2s;
+    }
+    .styled-range::-webkit-slider-thumb:active {
+      box-shadow: 0 0 0 8px rgba(255,51,102,.18), 0 4px 12px rgba(255,51,102,.4);
+    }
+
+    /* ===========================================
+       PLAY SCREEN
+    =========================================== */
+    .play-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+      padding-top: 4px;
+    }
+
+    .play-game-name {
+      font-family: 'Abril Fatface', cursive;
+      font-size: 1.5rem;
+      color: var(--primary);
+    }
+
+    .btn-end {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .04em;
+      transition: all .2s;
+    }
+    .btn-end:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* Task card */
+    .task-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 30px 24px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+      animation: taskIn .42s cubic-bezier(.34, 1.15, .64, 1) both;
+    }
+
+    @keyframes taskIn {
+      from { opacity: 0; transform: scale(.9) translateY(18px); }
+      to   { opacity: 1; transform: scale(1)  translateY(0);    }
+    }
+
+    /* Colored top stripe per type */
+    .task-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      border-radius: var(--r) var(--r) 0 0;
+      background: var(--stripe-color, linear-gradient(90deg, var(--primary), var(--secondary)));
+    }
+
+    .task-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 13px;
+      font-size: .68rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .task-text {
+      font-size: clamp(1.05rem, 4.2vw, 1.28rem);
+      font-weight: 700;
+      line-height: 1.65;
+    }
+
+    /* Inline highlights */
+    .task-text .hi    { color: var(--secondary); font-weight: 900; }
+    .task-text .hi2   { color: var(--cyan);      font-weight: 900; }
+    .task-text .hi3   { color: var(--green);     font-weight: 900; }
+
+    /* Penalty pill inside task text */
+    .penalty-pill {
+      display: inline-block;
+      background: var(--primary);
+      color: #fff;
+      font-family: 'Abril Fatface', cursive;
+      font-size: 1.15em;
+      padding: 1px 10px 2px;
+      border-radius: 20px;
+      vertical-align: middle;
+      box-shadow: 0 0 18px var(--primary-glow);
+      animation: pillPop .5s cubic-bezier(.34, 1.56, .64, 1) .25s both;
+    }
+
+    @keyframes pillPop {
+      from { opacity: 0; transform: scale(0) rotate(-15deg); }
+      to   { opacity: 1; transform: scale(1) rotate(0); }
+    }
+
+    /* Player chips (for multi tasks) */
+    .player-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0 0;
+    }
+
+    .p-chip {
+      background: var(--sec-dim);
+      border: 1.5px solid rgba(255,204,0,.35);
+      color: var(--secondary);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-weight: 900;
+      font-size: .88rem;
+    }
+
+    /* ===========================================
+       MAJORITY VOTING UI
+    =========================================== */
+    .majority-q {
+      font-family: 'Abril Fatface', cursive;
+      font-size: clamp(1.15rem, 4.5vw, 1.5rem);
+      color: var(--text);
+      line-height: 1.3;
+      text-align: center;
+      margin-bottom: 26px;
+    }
+
+    .vote-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .vote-opt {
+      background: var(--surface2);
+      border: 2px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 18px 12px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      transition: border-color .2s, background .2s;
+    }
+    .vote-opt.has-votes {
+      border-color: rgba(255,204,0,.45);
+      background: var(--sec-dim);
+    }
+
+    .vote-label {
+      font-weight: 800;
+      font-size: .88rem;
+      text-align: center;
+      line-height: 1.3;
+      min-height: 2.2em;
+    }
+
+    .vote-num {
+      font-family: 'Abril Fatface', cursive;
+      font-size: 2.8rem;
+      color: var(--secondary);
+      line-height: 1;
+    }
+
+    .vote-btns {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-minus {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .15s;
+    }
+    .btn-minus:hover { border-color: var(--primary); color: var(--primary); }
+
+    .btn-plus {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      border: none;
+      background: var(--secondary);
+      color: #000;
+      font-size: 1.5rem;
+      font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 4px 16px rgba(255,204,0,.3);
+    }
+    .btn-plus:hover { transform: scale(1.12); box-shadow: 0 6px 24px rgba(255,204,0,.45); }
+
+    .vote-hint {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: .75rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .btn-eval {
+      width: 100%;
+      background: linear-gradient(135deg, var(--secondary), #cc9900);
+      color: #000;
+      border: none;
+      border-radius: var(--r-sm);
+      padding: 15px;
+      font-size: .98rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 6px 24px rgba(255,204,0,.28);
+    }
+    .btn-eval:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(255,204,0,.42); }
+    .btn-eval:disabled { opacity: .4; transform: none; cursor: default; }
+
+    /* Majority result block */
+    .majority-result {
+      margin-top: 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 18px;
+      text-align: center;
+      animation: slideIn .28s ease both;
+    }
+
+    .result-icon  { font-size: 2rem; margin-bottom: 8px; }
+    .result-text  { font-weight: 700; line-height: 1.6; font-size: .95rem; }
+    .result-text strong { color: var(--secondary); }
+    .result-text .pen   { color: var(--primary); font-family: 'Abril Fatface', cursive; font-size: 1.1em; }
+
+    /* ===========================================
+       NEXT BUTTON
+    =========================================== */
+    .btn-next {
+      width: 100%;
+      background: transparent;
+      border: 2px solid var(--border);
+      color: var(--text);
+      border-radius: var(--r);
+      padding: 16px 24px;
+      font-size: .98rem;
+      font-weight: 800;
+      letter-spacing: .05em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all .2s;
+    }
+    .btn-next:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+      background: rgba(0,229,255,.05);
+      transform: translateY(-2px);
+    }
+
+    /* ===========================================
+       VALIDATION BADGE
+    =========================================== */
+    .warn-badge {
+      background: rgba(255,204,0,.1);
+      border: 1px solid rgba(255,204,0,.3);
+      color: var(--secondary);
+      border-radius: var(--r-xs);
+      padding: 10px 14px;
+      font-size: .8rem;
+      font-weight: 700;
+      margin-top: 10px;
+      text-align: center;
+      animation: slideIn .2s ease both;
+    }
+
+    /* ===========================================
+       TASK-TYPE COLOR STRIPES (applied via JS)
+    =========================================== */
+    .type-majority { --stripe-color: linear-gradient(90deg, var(--secondary), #cc9900); }
+    .type-duel     { --stripe-color: linear-gradient(90deg, var(--primary),   #cc0033); }
+    .type-group    { --stripe-color: linear-gradient(90deg, var(--accent),    #5b21b6); }
+    .type-single   { --stripe-color: linear-gradient(90deg, var(--cyan),      #0099cc); }
+    .type-multi    { --stripe-color: linear-gradient(90deg, var(--green),     #00cc66); }
+
+/* --- Animations --- */
+@keyframes pop {
+  0% { transform: scale(0.8); opacity: 0; }
+  70% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeInDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

@@ -1,0 +1,12 @@
+<!-- =====================================================
+     PLAY SCREEN
+===================================================== -->
+<div class="screen" id="screen-play">
+  <div class="play-bar">
+    <span class="play-game-name" id="play-game-name">Spiel läuft...</span>
+    <button class="btn-end" onclick="if(window.SharedRoom && window.SharedRoom.isActive) SharedRoom.returnToLobby(); else Router.go('home')">✕ Beenden</button>
+  </div>
+  <div id="play-content">
+    <!-- Wird durch das aktive Spiel-Objekt befüllt -->
+  </div>
+</div>

@@ -1,0 +1,383 @@
+/* ===================================================
+   Kiss Marry Kill - Styles
+=================================================== */
+
+/* --- Mode Selection --- */
+.kmk-mode-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 400px;
+  margin: 40px auto;
+}
+
+.kmk-mode-btn {
+  background: var(--bg-card);
+  border: 2px solid var(--primary-color, #ff3366);
+  border-radius: 12px;
+  padding: 30px 20px;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.kmk-mode-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--primary-glow, rgba(255,51,102,0.3));
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.kmk-mode-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: normal;
+  margin-top: 8px;
+}
+
+
+/* --- Play Area --- */
+.kmk-play-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: stretch;
+  gap: 15px;
+  width: 95%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.kmk-card {
+  flex: 1;
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  min-width: 0; /* flexbox fix */
+}
+
+.kmk-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 12px;
+  color: #fff;
+  min-height: 2.2rem;
+  display: flex;
+  align-items: center;
+}
+
+.kmk-image-wrapper {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  background: #1a1a25;
+  border: 1px solid rgba(255,255,255,0.05);
+  position: relative; /* For layers */
+}
+
+.kmk-image-blur-bg {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: calc(100% + 20px);
+  height: calc(100% + 20px);
+  object-fit: cover;
+  filter: blur(15px) brightness(0.6);
+  z-index: 1;
+}
+
+.kmk-image {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* --- Action Buttons --- */
+.kmk-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  width: 100%;
+}
+
+.kmk-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.kmk-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+/* Specific active states */
+.kmk-btn.active-kiss {
+  background: #ff477e;
+  box-shadow: 0 0 15px rgba(255, 71, 126, 0.5);
+  transform: scale(1.15);
+}
+.kmk-btn.active-kill {
+  background: #ef233c;
+  box-shadow: 0 0 15px rgba(239, 35, 60, 0.5);
+  transform: scale(1.15);
+}
+.kmk-btn.active-marry {
+  background: #ffd166;
+  box-shadow: 0 0 15px rgba(255, 209, 102, 0.5);
+  transform: scale(1.15);
+}
+
+.kmk-btn.disabled {
+  opacity: 0.3;
+  pointer-events: none;
+  filter: grayscale(100%);
+}
+
+.kmk-btn.taken {
+  opacity: 0.3;
+}
+
+
+/* --- Result bars --- */
+.kmk-results {
+  width: 100%;
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.kmk-bar-container {
+  width: 100%;
+  height: 24px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.kmk-bar-fill {
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  transition: width 0.8s ease-out;
+}
+
+.kmk-bar-text {
+  position: relative;
+  z-index: 1;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-left: 10px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+
+/* --- Podium System --- */
+.kmk-podium-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 20px;
+  width: 100%;
+  margin: 60px 0 20px 0;
+  min-height: 400px;
+}
+
+.kmk-podium-slot {
+  flex: 1;
+  max-width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.kmk-podium-winner-name {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+  text-align: center;
+  color: #fff;
+}
+
+.kmk-podium-winner-pct {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 15px;
+}
+
+.kmk-podium-winner-img-wrapper {
+  width: 100px;
+  height: 125px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: -15px; /* Interlap with podium */
+  z-index: 5;
+  border: 3px solid #fff;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  background: #111;
+}
+
+.kmk-podium-winner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center; /* Prevents cutting off heads */
+  min-width: 100%;
+  min-height: 100%;
+}
+
+.kmk-podium-bar {
+  width: 100%;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 30px;
+  padding-bottom: 20px; /* Space for emojis at the bottom */
+  position: relative;
+  box-shadow: inset 0 20px 40px rgba(255,255,255,0.1), 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.kmk-podium-label {
+  font-size: 1.8rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.8);
+  margin-top: 10px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.kmk-podium-emoji {
+  font-size: 2.5rem;
+  margin-top: 0px; /* Reduced to pull it up */
+}
+
+/* Segmented Bar View (Specific Analysis) */
+.kmk-segmented-bar {
+  width: 100%;
+  height: 200px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  flex-direction: column; /* Stacked */
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.kmk-segment {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.9rem;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  transition: height 0.5s ease;
+  overflow: hidden; /* Hide text if height is too small */
+}
+
+.kmk-segment.marry { background: linear-gradient(90deg, #ffd166, #b8860b); color: #000; }
+.kmk-segment.kiss  { background: linear-gradient(90deg, #ff477e, #aa0044); }
+.kmk-segment.kill  { background: linear-gradient(90deg, #6c757d, #343a40); }
+
+/* Podium Heights & Colors */
+.kmk-podium-slot.marry .kmk-podium-bar {
+  height: 200px;
+  background: linear-gradient(180deg, #ffd166 0%, #b8860b 100%);
+  border: 1px solid #ffcc33;
+}
+.kmk-podium-slot.kiss .kmk-podium-bar {
+  height: 150px;
+  background: linear-gradient(180deg, #ff477e 0%, #aa0044 100%);
+  border: 1px solid #ff3366;
+}
+.kmk-podium-slot.kill .kmk-podium-bar {
+  height: 130px;
+  background: linear-gradient(180deg, #6c757d 0%, #343a40 100%);
+  border: 1px solid #495057;
+}
+
+.kmk-podium-slot.marry .kmk-podium-winner-img-wrapper { border-color: #ffd166; }
+.kmk-podium-slot.kiss .kmk-podium-winner-img-wrapper { border-color: #ff477e; }
+.kmk-podium-slot.kill .kmk-podium-winner-img-wrapper { border-color: #6c757d; }
+
+
+/* --- Timer --- */
+.kmk-timer-container {
+  width: 90%;
+  max-width: 600px;
+  height: 10px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 5px;
+  margin: 20px auto;
+  overflow: hidden;
+  position: relative;
+}
+
+.kmk-timer-bar {
+  height: 100%;
+  background: var(--primary-color, #ff3366);
+  width: 100%;
+  transition: width 1s linear;
+}
+
+.kmk-timer-text {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: var(--primary-color, #ff3366);
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+
+/* --- Game Over --- */
+.kmk-game-over {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.kmk-final-stats {
+  margin: 30px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Mobile view */
+@media (max-width: 600px) {
+  .kmk-play-container {
+    flex-direction: column;
+    padding-bottom: 20px;
+  }
+}

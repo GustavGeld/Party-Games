@@ -1,0 +1,33 @@
+<div class="screen active" id="screen-home">
+  <div class="home-hero">
+    <span class="home-logo">&#127918;</span>
+    <h1 class="home-title">Party<br>Games</h1>
+    <p class="home-sub">Wählt euer Spiel</p>
+  </div>
+
+  <div style="padding: 0 1rem 1rem;">
+    <button
+      class="game-card"
+      style="
+        --gc-color: #22c55e;
+        --gc-shadow: rgba(34,197,94,.25);
+        --gc-glow: rgba(34,197,94,.12);
+        width: 100%;
+        margin-bottom: 0.5rem;
+      "
+      onclick="SharedRoom.open()"
+    >
+      <span class="gc-icon">🏠</span>
+      <div class="gc-info">
+        <div class="gc-name">Gemeinsamer Raum</div>
+        <div class="gc-tagline">Raum erstellen & Spiele wechseln ohne neu verbinden</div>
+      </div>
+      <span class="gc-arrow">&rarr;</span>
+    </button>
+  </div>
+
+  <p class="section-label">Verfügbare Spiele</p>
+  <div class="games-grid" id="games-grid">
+    <!-- Wird durch JS befüllt aus dem GAMES-Array -->
+  </div>
+</div>

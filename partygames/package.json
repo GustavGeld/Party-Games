@@ -1,0 +1,13 @@
+{
+  "name": "party-games",
+  "version": "1.0.0",
+  "description": "Modulare Party-Spiele Sammlung mit Build-System",
+  "scripts": {
+    "build": "node build.js",
+    "watch": "node build.js --watch",
+    "extract": "node extract-modules.js",
+    "push": "npm run build && git add . && git commit -m \"Build update\" && git push"
+  },
+  "keywords": ["games", "party", "multiplayer", "p2p"],
+  "license": "MIT"
+}
