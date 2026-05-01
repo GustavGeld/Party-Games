@@ -9,7 +9,7 @@ const path = require('path');
 // Configuration
 const CONFIG = {
   srcDir: './src',
-  outputFile: './index.html',
+  outputFile: '../index.html',
   encoding: 'utf8'
 };
 

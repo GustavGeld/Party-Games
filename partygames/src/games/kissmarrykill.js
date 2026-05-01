@@ -349,7 +349,7 @@ const KmkGame = {
 
     html += '<div class="kmk-play-container">';
     images.forEach((imgObj, i) => {
-      let pathStr = 'Pictures/' + imgObj.category + '/' + imgObj.file;
+      let pathStr = 'partygames/Pictures/' + imgObj.category + '/' + imgObj.file;
       let nameStr = this.formatName(imgObj.file);
       html += `
         <div class="kmk-card">
@@ -469,7 +469,7 @@ const KmkGame = {
     if (this.state.resultViewMode === 'segmented') {
       // MODE 2: SEGMENTED BARS (Specific Analysis)
       images.forEach((imgObj, i) => {
-        const pathStr = 'Pictures/' + imgObj.category + '/' + imgObj.file;
+        const pathStr = 'partygames/Pictures/' + imgObj.category + '/' + imgObj.file;
         const nameStr = this.formatName(imgObj.file);
         const data = rankings[i];
         
@@ -500,7 +500,7 @@ const KmkGame = {
 
       const getWinnerHTML = (idx, type, label, emoji) => {
         const imgObj = images[idx];
-        const pathStr = 'Pictures/' + imgObj.category + '/' + imgObj.file;
+        const pathStr = 'partygames/Pictures/' + imgObj.category + '/' + imgObj.file;
         const nameStr = this.formatName(imgObj.file);
         const pct = rankings[idx][type];
         return `
