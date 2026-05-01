@@ -33,20 +33,48 @@ var Multiplayer = {
     ]
   },
 
-  // Internet: STUN-only
-  // NOTE: Cross-network (Mobile -> PC) might fail due to strict NATs.
-  // Free TURN servers require an account/API key now, which we opted out of.
-  INTERNET_ICE: {
+  // Metered.ca free TURN server (20GB/month free)
+  METERED_API_KEY: 'RgsNg5e1swSsv9SuQQPehMorQ-z0Zk1W4tWkxITA2CCtxBaf',
+
+  // Fallback: STUN-only (works on same network, not cross-network)
+  STUN_ONLY: {
     iceServers: [
       { urls: 'stun:stun.l.google.com:19302' },
-      { urls: 'stun:stun1.l.google.com:19302' },
-      { urls: 'stun:stun2.l.google.com:19302' },
-      { urls: 'stun:stun.services.mozilla.com:3478' }
+      { urls: 'stun:stun1.l.google.com:19302' }
     ]
   },
 
+  // Cached TURN credentials (fetched at runtime)
+  _cachedIceConfig: null,
+  _cacheTimestamp: 0,
+
   _getIceConfig: async function() {
-    return this.mode === 'local' ? this.LOCAL_ICE : this.INTERNET_ICE;
+    if (this.mode === 'local') return this.LOCAL_ICE;
+
+    // Use cached config if less than 10 minutes old
+    if (this._cachedIceConfig && (Date.now() - this._cacheTimestamp < 600000)) {
+      return this._cachedIceConfig;
+    }
+
+    // Fetch fresh TURN credentials from Metered.ca
+    if (this.METERED_API_KEY) {
+      try {
+        var response = await fetch(
+          'https://partygames.metered.live/api/v1/turn/credentials?apiKey=' + this.METERED_API_KEY
+        );
+        if (response.ok) {
+          var iceServers = await response.json();
+          this._cachedIceConfig = { iceServers: iceServers };
+          this._cacheTimestamp = Date.now();
+          console.log('TURN credentials fetched:', iceServers.length, 'servers');
+          return this._cachedIceConfig;
+        }
+      } catch (e) {
+        console.warn('Failed to fetch TURN credentials, using STUN-only:', e);
+      }
+    }
+
+    return this.STUN_ONLY;
   },
 
   generateId: function() {
