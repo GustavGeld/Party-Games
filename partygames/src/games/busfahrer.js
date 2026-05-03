@@ -518,11 +518,11 @@ const Busfahrer = {
     const currentPlayer = s.candidates[s.currentPlayerIndex] || { name: '...', id: null };
     const playerName = typeof currentPlayer === 'string' ? currentPlayer : (currentPlayer.name || '...');
     const currentId = typeof currentPlayer === 'object' ? currentPlayer.id : null;
-    const myId = Multiplayer.role === 'host' ? 'host-1' : Multiplayer.myId;
+    const isMeHost = (typeof Multiplayer !== 'undefined' && Multiplayer.role === 'host') || (typeof SharedRoom !== 'undefined' && SharedRoom.isActive && SharedRoom.isLocalHost);
+    const myId = isMeHost ? 'host-1' : (typeof Multiplayer !== 'undefined' ? Multiplayer.myId : null);
     
     // Improved identity check for "Host" name
     const isHost = (currentId === 'host-1' || playerName.toLowerCase() === 'host' || playerName.toLowerCase() === 'host (du)');
-    const isMeHost = (Multiplayer.role === 'host');
     const isMyTurn = (s.mode === 'offline') || (isMeHost && isHost) || (currentId === myId);
 
     let ht = `

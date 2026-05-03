@@ -454,7 +454,8 @@ const Schuldspruch = {
       const s = this.state;
       if (s.phase === 'results') return this.renderResults();
 
-      const myId = Multiplayer.role === 'host' ? 'host-1' : Multiplayer.myId;
+      const isHost = (typeof Multiplayer !== 'undefined' && Multiplayer.role === 'host') || (typeof SharedRoom !== 'undefined' && SharedRoom.isActive && SharedRoom.isLocalHost);
+      const myId = isHost ? 'host-1' : (typeof Multiplayer !== 'undefined' ? Multiplayer.myId : null);
       const iVoted = !!s.votes[myId];
 
       let ht = '';
@@ -465,7 +466,7 @@ const Schuldspruch = {
             </div>
             <div class="card" style="text-align:center; padding: 25px 15px; margin-bottom:15px; background:var(--primary-dim); border: 2px solid var(--primary);">
               <h2 style="font-size:1.6rem; line-height:1.3; margin:0;">Wer würde am ehesten ${s.currentQuestion}?</h2>
-              ${s.maxRounds > 20 && Multiplayer.role === 'host' ? `<button class="btn-primary" style="background:var(--primary); color:#fff; font-size:0.8rem; margin-top:15px; padding:5px 10px; width:auto;" onclick="Schuldspruch.renderResults()">Spiel beenden</button>` : ''}
+              ${s.maxRounds > 20 && ((typeof Multiplayer !== 'undefined' && Multiplayer.role === 'host') || (typeof SharedRoom !== 'undefined' && SharedRoom.isActive && SharedRoom.isLocalHost)) ? `<button class="btn-primary" style="background:var(--primary); color:#fff; font-size:0.8rem; margin-top:15px; padding:5px 10px; width:auto;" onclick="Schuldspruch.renderResults()">Spiel beenden</button>` : ''}
             </div>
             
             <div style="text-align:center; margin-bottom:20px; font-weight:bold; color:var(--primary); font-size:1.5rem;">

@@ -96,13 +96,20 @@ const KoenigsCup = {
   },
 
   toggleSettingsUI() {
+    let overlay = document.getElementById('kc-settings-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.className = 'overlay-selection';
+      overlay.id = 'kc-settings-overlay';
+      overlay.style = 'position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:110; display:flex; align-items:center; justify-content:center; padding:20px; color:#fff; overflow-y:auto;';
+      document.body.appendChild(overlay);
+    }
+    this.renderSettingsContent(overlay);
+  },
+
+  renderSettingsContent(overlay) {
     const s = this.state;
     const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
-    
-    const div = document.createElement('div');
-    div.className = 'overlay-selection';
-    div.id = 'kc-settings-overlay';
-    div.style = 'position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:110; display:flex; align-items:center; justify-content:center; padding:20px; color:#fff; overflow-y:auto;';
     
     let rankTogglesHTML = ranks.map(r => {
       const isEnabled = s.enabledRanks.includes(r);
@@ -161,17 +168,17 @@ const KoenigsCup = {
       </div>
     `).join('');
 
-    div.innerHTML = `
-      <div class="card" style="width:100%; max-width:500px; max-height:90vh; overflow-y:auto; position:relative;">
+    overlay.innerHTML = `
+      <div class="card kc-settings-main-scroll" style="width:100%; max-width:500px; max-height:90vh; overflow-y:auto; position:relative;">
         <h2 style="margin-bottom:20px;">⚙️ Karten-Einstellungen</h2>
         
         <div class="card-label">Standard-Karten</div>
-        <div style="display:grid; grid-template-columns: 1fr; max-height:350px; overflow-y:auto; margin-bottom:20px; padding-right:5px; background:rgba(0,0,0,0.2); border-radius:10px; padding:10px;">
+        <div class="kc-settings-ranks-scroll" style="display:grid; grid-template-columns: 1fr; max-height:350px; overflow-y:auto; margin-bottom:20px; padding-right:5px; background:rgba(0,0,0,0.2); border-radius:10px; padding:10px;">
           ${rankTogglesHTML}
         </div>
 
         <div class="card-label" style="color:var(--secondary);">✨ Bonus-Karten (Ganz am Ende ins Deck gemischt)</div>
-        <div style="display:grid; grid-template-columns: 1fr; max-height:280px; overflow-y:auto; margin-bottom:20px; padding-right:5px; background:rgba(0,0,0,0.2); border-radius:10px; padding:10px;">
+        <div class="kc-settings-bonus-scroll" style="display:grid; grid-template-columns: 1fr; max-height:280px; overflow-y:auto; margin-bottom:20px; padding-right:5px; background:rgba(0,0,0,0.2); border-radius:10px; padding:10px;">
           ${bonusTogglesHTML}
         </div>
 
@@ -187,7 +194,7 @@ const KoenigsCup = {
 
         ${s.customCards.length > 0 ? `
           <div class="card-label">Deine Extra-Karten</div>
-          <div style="max-height:200px; overflow-y:auto; margin-bottom:20px;">
+          <div class="kc-settings-custom-scroll" style="max-height:200px; overflow-y:auto; margin-bottom:20px;">
             ${customCardsHTML}
           </div>
         ` : ''}
@@ -195,7 +202,6 @@ const KoenigsCup = {
         <button class="btn-primary" onclick="document.getElementById('kc-settings-overlay').remove()">Fertig ✅</button>
       </div>
     `;
-    document.body.appendChild(div);
   },
 
   toggleRank(r) {
@@ -247,8 +253,23 @@ const KoenigsCup = {
 
   refreshSettingsUI() {
     const overlay = document.getElementById('kc-settings-overlay');
-    if (overlay) overlay.remove();
-    this.toggleSettingsUI();
+    if (overlay) {
+      // Save scroll positions
+      const mainScroll = overlay.querySelector('.kc-settings-main-scroll')?.scrollTop;
+      const ranksScroll = overlay.querySelector('.kc-settings-ranks-scroll')?.scrollTop;
+      const bonusScroll = overlay.querySelector('.kc-settings-bonus-scroll')?.scrollTop;
+      const customScroll = overlay.querySelector('.kc-settings-custom-scroll')?.scrollTop;
+
+      this.renderSettingsContent(overlay);
+
+      // Restore scroll positions
+      if (mainScroll !== undefined) overlay.querySelector('.kc-settings-main-scroll').scrollTop = mainScroll;
+      if (ranksScroll !== undefined) overlay.querySelector('.kc-settings-ranks-scroll').scrollTop = ranksScroll;
+      if (bonusScroll !== undefined) overlay.querySelector('.kc-settings-bonus-scroll').scrollTop = bonusScroll;
+      if (customScroll !== undefined) overlay.querySelector('.kc-settings-custom-scroll').scrollTop = customScroll;
+    } else {
+      this.toggleSettingsUI();
+    }
   },
 
   renderPlayersList() {
@@ -441,9 +462,16 @@ const KoenigsCup = {
 
     // Online indicators
     const isOffline = s.mode === 'offline';
-    const isHost = (typeof Multiplayer !== 'undefined' && Multiplayer.role === 'host') || SharedRoom.isActive;
+    const isHost = (typeof Multiplayer !== 'undefined' && Multiplayer.role === 'host') || (typeof SharedRoom !== 'undefined' && SharedRoom.isActive && SharedRoom.isLocalHost);
     const myId = isHost ? 'host-1' : (typeof Multiplayer !== 'undefined' ? Multiplayer.myId : null);
-    const isMyTurn = isOffline || (s.players[s.currentPlayerIndex] && s.players[s.currentPlayerIndex].id === myId);
+    
+    // Robust turn detection: Check ID OR Name (as fallback)
+    const activePlayer = s.players[s.currentPlayerIndex];
+    const isMyTurn = isOffline || (activePlayer && (
+      (activePlayer.id && activePlayer.id === myId) || 
+      (activePlayer.name && activePlayer.name === s.myName) ||
+      (typeof activePlayer === 'string' && activePlayer === s.myName)
+    ));
 
     content = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
@@ -556,7 +584,8 @@ const KoenigsCup = {
     document.getElementById('play-content').innerHTML = content;
 
     // Add Host Lobby Button
-    if ((typeof Multiplayer !== 'undefined' && Multiplayer.role === 'host') || SharedRoom.isActive) {
+    // Add Host Lobby Button
+    if (isHost || (typeof SharedRoom !== 'undefined' && SharedRoom.isActive && SharedRoom.isLocalHost)) {
       const lobbyBtn = document.createElement('button');
       lobbyBtn.className = 'btn-primary';
       lobbyBtn.style = 'background:var(--surface2); color:var(--text); width:auto; margin: 20px auto 0; display:block;';
@@ -638,7 +667,7 @@ const KoenigsCup = {
           <p style="font-size:0.9rem; color:var(--text-muted);">Spiel vorbei.</p>
         </div>
 
-        ${s.mode === 'offline' || Multiplayer.role === 'host' ? `
+        ${s.mode === 'offline' || (typeof Multiplayer !== 'undefined' && Multiplayer.role === 'host') || (typeof SharedRoom !== 'undefined' && SharedRoom.isActive && SharedRoom.isLocalHost) ? `
            <button class="btn-primary" onclick="KoenigsCup.startGame()">Nochmal spielen</button>
         ` : '<p style="color:var(--text-muted);">Warte auf den Host für eine neue Runde...</p>'}
         <button class="btn-primary" style="background:var(--surface2); color:var(--text); margin-top:10px;" onclick="location.reload()">Hauptmenü</button>
@@ -666,12 +695,21 @@ const KoenigsCup = {
 
   onOnlineGameStart(settings) {
     const s = this.state;
+    s.mode = 'online';
     s.phase = 'game';
     s.players = settings.players || s.players;
     s.enabledRanks = settings.enabledRanks || s.enabledRanks;
     s.bonusCardCounts = settings.bonusCardCounts || {};
     s.customCards = settings.customCards || [];
     
+    // Ensure myName is consistent with SharedRoom/Multiplayer
+    if (typeof SharedRoom !== 'undefined' && SharedRoom.state.myName) {
+      s.myName = SharedRoom.state.myName;
+    } else if (typeof Multiplayer !== 'undefined' && Multiplayer.myId) {
+      // Fallback: if no name is found, use the ID or 'Ich'
+      s.myName = s.myName || 'Ich'; 
+    }
+
     s.currentPlayerIndex = 0;
     s.kingsDrawn = 0;
     s.activeRules = [];
@@ -681,7 +719,7 @@ const KoenigsCup = {
     s.currentCard = null;
     
     // Only host inits deck
-    if (Multiplayer.role === 'host') {
+    if (Multiplayer.role === 'host' || (typeof SharedRoom !== 'undefined' && SharedRoom.isActive && SharedRoom.isLocalHost)) {
       this.initDeck();
     }
     
@@ -707,7 +745,7 @@ const KoenigsCup = {
       }
     };
 
-    if (Multiplayer.role === 'host') {
+    if (Multiplayer.role === 'host' || (typeof SharedRoom !== 'undefined' && SharedRoom.isActive && SharedRoom.isLocalHost)) {
       Multiplayer.sendGameState(data);
     } else if (Multiplayer.role === 'guest') {
       Multiplayer.sendToHost(data);
@@ -721,7 +759,8 @@ const KoenigsCup = {
       this.renderGame();
 
       // If I am host, I must relay this guest update to all OTHER guests
-      if (Multiplayer.role === 'host') {
+      // If I am host, I must relay this guest update to all OTHER guests
+      if (Multiplayer.role === 'host' || (typeof SharedRoom !== 'undefined' && SharedRoom.isActive && SharedRoom.isLocalHost)) {
         this.syncState();
       }
     }

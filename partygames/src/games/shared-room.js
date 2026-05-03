@@ -8,6 +8,7 @@ const SharedRoom = {
   isActive: false,
   selectedGameId: null,    // ID of the game currently selected by host
   isInLobby: false,
+  isLocalHost: false,
 
   /* ===== ENTRY POINT ===== */
   open() {
@@ -57,6 +58,7 @@ const SharedRoom = {
     this.state.players = [{ id: 'host-1', name: hostName, connection: null, isHost: true }];
     this.state.myName = hostName;
     this.state.mode = 'online';
+    this.isLocalHost = true;
     this.selectedGameId = GAMES.find(g => g.supportsOnline !== false)?.id || null;
 
     Multiplayer.mode = 'internet';
@@ -84,6 +86,7 @@ const SharedRoom = {
 
     this.state.myName = guestName;
     this.state.mode = 'online';
+    this.isLocalHost = false;
 
     Multiplayer.mode = 'internet';
     Multiplayer.joinRoom(code);
